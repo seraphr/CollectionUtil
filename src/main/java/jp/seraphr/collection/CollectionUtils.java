@@ -11,20 +11,20 @@ public final class CollectionUtils {
 
     }
 
-    public static <_Source, _Dest> List<_Dest> convert(List<_Source> aSource, Converter<? super _Source, ? extends _Dest> aConverter) {
+    public static <_Source, _Dest> List<_Dest> map(List<_Source> aSource, Converter<? super _Source, ? extends _Dest> aConverter) {
         List<_Dest> tResult = new ArrayList<_Dest>();
-        convert(aSource, tResult, aConverter);
+        map(aSource, tResult, aConverter);
 
         return tResult;
     }
 
-    public static <_Source, _Dest> void convert(Collection<_Source> aSource, Collection<_Dest> aDest, Converter<? super _Source, ? extends _Dest> aConverter) {
+    public static <_Source, _Dest> void map(Collection<_Source> aSource, Collection<_Dest> aDest, Converter<? super _Source, ? extends _Dest> aConverter) {
         for (_Source tSource : aSource) {
             aDest.add(aConverter.convert(tSource));
         }
     }
 
-    public static <_Element> List<_Element> remove(List<_Element> aSource, Predicate<_Element> aPredicate){
+    public static <_Element> List<_Element> remove(List<_Element> aSource, Predicate<? super _Element> aPredicate){
         List<_Element> tResult = new ArrayList<_Element>();
 
         Iterator<_Element> tIterator = aSource.iterator();
@@ -39,21 +39,21 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<_Element> aPredicate){
+    public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<? super _Element> aPredicate){
         List<_Element> tResult = new ArrayList<_Element>();
         filter(aSource, tResult, aPredicate);
 
         return tResult;
     }
 
-    public static <_Element> void filter(Collection<_Element> aSource, Collection<_Element> aDest, Predicate<_Element> aPredicate) {
+    public static <_Element> void filter(Collection<_Element> aSource, Collection<? super _Element> aDest, Predicate<? super _Element> aPredicate) {
         for (_Element tElement : aSource) {
             if (aPredicate.apply(tElement))
                 aDest.add(tElement);
         }
     }
 
-    public static <_Element> _Element find(Collection<_Element> aSource, Predicate<_Element> aPredicate){
+    public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate){
         for (_Element tElement : aSource) {
             if(aPredicate.apply(tElement))
                 return tElement;
@@ -62,13 +62,23 @@ public final class CollectionUtils {
         return null;
     }
 
-    public static <_Element> boolean contains(Collection<_Element> aSource, Predicate<_Element> aPredicate){
+    public static <_Element> int findIndex(List<_Element> aSource, Predicate<? super _Element> aPredicate){
+        int tLength = aSource.size();
+        for(int i=0; i<tLength; i++){
+            if(aPredicate.apply(aSource.get(i)))
+                return i;
+        }
+
+        return -1;
+    }
+
+    public static <_Element> boolean contains(Collection<_Element> aSource, Predicate<? super _Element> aPredicate){
         return find(aSource, aPredicate) != null;
     }
 
-    public static <_Element1, _Element2> boolean contains(Collection<_Element1> aSource, _Element2 aTarget, Equivalence<_Element1, _Element2> aEquivalence){
+    public static <_Element1, _Element2> boolean contains(Collection<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence){
         final _Element2 tTarget = aTarget;
-        final Equivalence<_Element1, _Element2> tEquivalence = aEquivalence;
+        final Equivalence<? super _Element1,? super _Element2> tEquivalence = aEquivalence;
         Predicate<_Element1> tPredicate = new Predicate<_Element1>() {
             @Override
             public boolean apply(_Element1 aTarget) {
@@ -91,7 +101,7 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<_Source, _E1> aConverter1, Converter<_Source, _E2> aConverter2) {
+    public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<? super _Source, ? extends _E1> aConverter1, Converter<? super _Source, ? extends _E2> aConverter2) {
         List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
         List<_Source> tSourcelist = aSourceList;
 
@@ -144,14 +154,13 @@ public final class CollectionUtils {
         return aTupleList.get(tIndex);
     }
 
-    public static <_E1, _E2> int findElementIndex1(List<Tuple2<_E1, _E2>> aTupleList, _E1 aTarget) {
-        for (int i = 0; i < aTupleList.size(); i++) {
-            Tuple2<_E1, _E2> tTuple2 = aTupleList.get(i);
-            if (tTuple2.get1().equals(aTarget))
-                return i;
-        }
-
-        return -1;
+    public static <_E1, _E2> int findElementIndex1(List<Tuple2<_E1, _E2>> aTupleList, final _E1 aTarget) {
+        return findIndex(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
+            @Override
+            public boolean apply(Tuple2<_E1, _E2> aTuple) {
+                return aTuple.get1().equals(aTarget);
+            }
+        });
     }
 
     public static <_E1, _E2> Tuple2<_E1, _E2> findElement2(List<Tuple2<_E1, _E2>> aTupleList, _E2 aTarget) {
@@ -162,13 +171,12 @@ public final class CollectionUtils {
         return aTupleList.get(tIndex);
     }
 
-    public static <_E1, _E2> int findElementIndex2(List<Tuple2<_E1, _E2>> aTupleList, _E2 aTarget) {
-        for (int i = 0; i < aTupleList.size(); i++) {
-            Tuple2<_E1, _E2> tTuple2 = aTupleList.get(i);
-            if (tTuple2.get2().equals(aTarget))
-                return i;
-        }
-
-        return -1;
+    public static <_E1, _E2> int findElementIndex2(List<Tuple2<_E1, _E2>> aTupleList, final _E2 aTarget) {
+        return findIndex(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
+            @Override
+            public boolean apply(Tuple2<_E1, _E2> aTuple) {
+                return aTuple.get2().equals(aTarget);
+            }
+        });
     }
 }
