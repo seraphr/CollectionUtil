@@ -101,6 +101,16 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    public static <_E> List<Tuple2<Integer, _E>> zipWithIndex(List<_E> aList){
+        List<Tuple2<Integer, _E>> tResult = new ArrayList<Tuple2<Integer,_E>>();
+        int tLength = aList.size();
+        for (int i = 0; i < tLength; i++) {
+            tResult.add(Tuple2.create(i, aList.get(i)));
+        }
+
+        return tResult;
+    }
+
     public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<? super _Source, ? extends _E1> aConverter1, Converter<? super _Source, ? extends _E2> aConverter2) {
         List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
         List<_Source> tSourcelist = aSourceList;
