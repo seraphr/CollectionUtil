@@ -21,4 +21,21 @@ public class Tuple2<_Element1, _Element2> {
     public _Element2 get2() {
         return mElement2;
     }
+
+    @Override
+    public int hashCode() {
+        return this.get1().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object aObj) {
+        if(!(aObj instanceof Tuple2))
+            return false;
+
+        Tuple2<?, ?> tObj = (Tuple2<?, ?>)aObj;
+
+        return tObj.get1().equals(this.get1()) && tObj.get2().equals(this.get2());
+    }
+
+
 }
