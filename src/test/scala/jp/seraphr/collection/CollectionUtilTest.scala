@@ -63,6 +63,20 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     })
   }
 
+  @Test
+  def testFindIndex: Unit = {
+    check((aList: List[Int]) => {
+      val tList = aList.zipWithIndex
+      val tJavaList = aList.asJava
+      for((v, i) <- tList){
+          val tFindIndex = findIndex(aList, ((a: Int) => a == v))
+          assertEquals(tJavaList.get(i), tJavaList.get(tFindIndex))
+      }
+
+      true
+    })
+  }
+
   private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
     return new Converter[_F, _T] {
       override def convert(aFrom: _F): _T = aFunc(aFrom)
