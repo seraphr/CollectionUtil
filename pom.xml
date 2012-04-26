@@ -16,7 +16,7 @@
 		<!-- vscaladoc settings -->
 		<maven.scaladoc.vscaladocVersion>1.2-m1</maven.scaladoc.vscaladocVersion>
 	</properties>
-
+<!--
 	<repositories>
 		<repository>
 			<id>scala-tools.releases</id>
@@ -36,7 +36,7 @@
 			<name>Scala-Tools Plugins Repository for Releases</name>
 			<url>http://scala-tools.org/repo-releases</url>
 		</pluginRepository>
-	</pluginRepositories>
+	</pluginRepositories> -->
 
 	<build>
 		<pluginManagement>
