@@ -118,7 +118,6 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     return new Converter[_F, _T] {
       override def convert(aFrom: _F): _T = aFunc(aFrom)
     }
-
   }
 
   private implicit def funcToPredicate[_F](aFunc: _F => Boolean): Predicate[_F] = {
@@ -128,7 +127,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   private implicit def funcToEquivalence[_F1, _F2](aFunc: (_F1, _F2) => Boolean): Equivalence[_F1, _F2] = {
-    return new Equivalence[_F1, _F2]{
+    return new Equivalence[_F1, _F2] {
       override def apply(aLeft: _F1, aRight: _F2): Boolean = aFunc(aLeft, aRight)
     }
   }
