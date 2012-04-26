@@ -68,9 +68,46 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     check((aList: List[Int]) => {
       val tList = aList.zipWithIndex
       val tJavaList = aList.asJava
-      for((v, i) <- tList){
-          val tFindIndex = findIndex(aList, ((a: Int) => a == v))
-          assertEquals(tJavaList.get(i), tJavaList.get(tFindIndex))
+      for ((v, i) <- tList) {
+        val tFindIndex = findIndex(aList, ((a: Int) => a == v))
+        assertEquals(tJavaList.get(i), tJavaList.get(tFindIndex))
+      }
+
+      true
+    })
+  }
+
+  @Test
+  def testContains: Unit = {
+    check((aList: List[Int]) => {
+      for (v <- aList) {
+        assertTrue(contains(aList, (a: Int) => a == v))
+        assertFalse(contains(aList.remove(a => a == v), (a: Int) => a == v))
+      }
+
+      true
+    })
+
+    import org.scalacheck.Gen
+    val tGen = Gen listOf Gen.choose(0, Int.MaxValue)
+    forAll(tGen) {
+      (aList: List[Int]) =>
+        {
+          for (v <- aList) {
+            assertFalse(contains(aList, (a: Int) => a < 0))
+          }
+
+          true
+        }
+    }
+  }
+
+  @Test
+  def testContains2: Unit = {
+    check((aList: List[Int]) => {
+      for (v <- aList.map(_.toString(): AnyRef)) {
+        assertFalse(contains(aList, (a: Int) => a == v))
+        assertTrue(contains(aList, v, (a: Int, v: AnyRef) => a.toString == v))
       }
 
       true
@@ -89,4 +126,11 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       override def apply(aFrom: _F): Boolean = aFunc(aFrom)
     }
   }
+
+  private implicit def funcToEquivalence[_F1, _F2](aFunc: (_F1, _F2) => Boolean): Equivalence[_F1, _F2] = {
+    return new Equivalence[_F1, _F2]{
+      override def apply(aLeft: _F1, aRight: _F2): Boolean = aFunc(aLeft, aRight)
+    }
+  }
+
 }
