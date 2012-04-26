@@ -16,27 +16,6 @@
 		<!-- vscaladoc settings -->
 		<maven.scaladoc.vscaladocVersion>1.2-m1</maven.scaladoc.vscaladocVersion>
 	</properties>
-<!--
-	<repositories>
-		<repository>
-			<id>scala-tools.releases</id>
-			<name>Scala-Tools Dependencies Repository for Releases</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-		<repository>
-			<id>java.net.maven2</id>
-			<name>java.net Maven2 Repository</name>
-			<url>http://download.java.net/maven/2/</url>
-		</repository>
-	</repositories>
-
-	<pluginRepositories>
-		<pluginRepository>
-			<id>scala-tools.releases</id>
-			<name>Scala-Tools Plugins Repository for Releases</name>
-			<url>http://scala-tools.org/repo-releases</url>
-		</pluginRepository>
-	</pluginRepositories> -->
 
 	<build>
 		<pluginManagement>
