@@ -11,14 +11,6 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   import scala.collection.JavaConverters._
 
   @Test
-  def t: Unit = {
-    check((a: Int) => {
-
-      true
-    })
-  }
-
-  @Test
   def testMap: Unit = {
     check((aList: List[Int]) => {
       val tActual = map(aList, (a: Int) => a / 2)
@@ -109,6 +101,20 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
         assertFalse(contains(aList, (a: Int) => a == v))
         assertTrue(contains(aList, v, (a: Int, v: AnyRef) => a.toString == v))
       }
+
+      true
+    })
+  }
+
+  @Test
+  def testZip: Unit = {
+    check((aList1: List[String], aList2: List[String]) => {
+      val tZipped = zip(aList1, aList2)
+      val tExpedted = (aList1 zip aList2).map(t => t match {
+        case (tLeft, tRight) => Tuple2.create(tLeft, tRight)
+      }).asJava
+
+      assertEquals(tExpedted, tZipped)
 
       true
     })

@@ -89,11 +89,9 @@ public final class CollectionUtils {
     }
 
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
-        if (aList1.size() != aList2.size())
-            throw new IllegalArgumentException("must be aList1.size() == aList2.size()");
+    	int tLength = Math.min(aList1.size(), aList2.size());
 
         List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
-        int tLength = aList1.size();
         for (int i = 0; i < tLength; i++) {
             tResult.add(new Tuple2<_E1, _E2>(aList1.get(i), aList2.get(i)));
         }
