@@ -144,6 +144,34 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     })
   }
 
+  @Test
+  def testUnzip1: Unit = {
+    check((aList1: List[String], aList2: List[String]) => {
+      val tZipped = zip(aList1, aList2)
+      val tUnzipped = unzip1(tZipped)
+
+      val (tE1, _) = (aList1 zip aList2).unzip
+
+      assertEquals(tE1.asJava, tUnzipped)
+
+      true
+    })
+  }
+
+  @Test
+  def testUnzip2: Unit = {
+    check((aList1: List[String], aList2: List[String]) => {
+      val tZipped = zip(aList1, aList2)
+      val tUnzipped = unzip2(tZipped)
+
+      val (_, tE2) = (aList1 zip aList2).unzip
+
+      assertEquals(tE2.asJava, tUnzipped)
+
+      true
+    })
+  }
+
   private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
     return new Converter[_F, _T] {
       override def convert(aFrom: _F): _T = aFunc(aFrom)
