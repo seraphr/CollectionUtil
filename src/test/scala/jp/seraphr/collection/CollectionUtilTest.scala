@@ -124,7 +124,22 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       val tZipped = zipWithIndex(aList)
       val tExpected = aList.zipWithIndex.map(tupleToTuple).asJava
 
-      assertEquals(tZipped, tExpected)
+      assertEquals(tExpected, tZipped)
+      true
+    })
+  }
+
+  @Test
+  def testUnzip: Unit = {
+    check((aList1: List[String], aList2: List[String]) => {
+      val tZipped = zip(aList1, aList2)
+      val tUnzipped = unzip(tZipped)
+
+      val (tE1, tE2) = (aList1 zip aList2).unzip
+
+      assertEquals(tE1.asJava, tUnzipped.get1())
+      assertEquals(tE2.asJava, tUnzipped.get2())
+
       true
     })
   }
