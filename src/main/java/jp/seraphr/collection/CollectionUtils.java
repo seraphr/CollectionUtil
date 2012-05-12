@@ -99,11 +99,11 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_E> List<Tuple2<Integer, _E>> zipWithIndex(List<_E> aList){
-        List<Tuple2<Integer, _E>> tResult = new ArrayList<Tuple2<Integer,_E>>();
+    public static <_E> List<Tuple2<_E, Integer>> zipWithIndex(List<_E> aList){
+        List<Tuple2<_E, Integer>> tResult = new ArrayList<Tuple2<_E, Integer>>();
         int tLength = aList.size();
         for (int i = 0; i < tLength; i++) {
-            tResult.add(Tuple2.create(i, aList.get(i)));
+            tResult.add(Tuple2.create(aList.get(i), i));
         }
 
         return tResult;

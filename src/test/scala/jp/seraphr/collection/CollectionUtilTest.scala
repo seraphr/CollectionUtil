@@ -110,12 +110,21 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testZip: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
       val tZipped = zip(aList1, aList2)
-      val tExpedted = (aList1 zip aList2).map(t => t match {
-        case (tLeft, tRight) => Tuple2.create(tLeft, tRight)
-      }).asJava
+      val tExpedted = (aList1 zip aList2).map(tupleToTuple).asJava
 
       assertEquals(tExpedted, tZipped)
 
+      true
+    })
+  }
+
+  @Test
+  def testZipWithIndex: Unit = {
+    check((aList: List[String]) => {
+      val tZipped = zipWithIndex(aList)
+      val tExpected = aList.zipWithIndex.map(tupleToTuple).asJava
+
+      assertEquals(tZipped, tExpected)
       true
     })
   }
@@ -138,4 +147,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     }
   }
 
+  private implicit def tupleToTuple[_E1, _E2](aFrom: (_E1, _E2)): Tuple2[_E1, _E2] = aFrom match {
+    case (tE1, tE2) => Tuple2.create(tE1, tE2)
+  }
 }
