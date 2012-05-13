@@ -172,6 +172,64 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     })
   }
 
+  @Test
+  def testFindElement1: Unit = {
+    import org.scalacheck.Gen
+
+    val tIntGen = Gen.choose(0, 1000)
+    val tTupleGen = for (l <- tIntGen; r <- tIntGen) yield (l, r)
+    val tGen = Gen.listOf(tTupleGen)
+
+    forAll(tGen) {
+      (aList: List[(Int, Int)]) =>
+        {
+          val tTestList = (0 to 1000).toList
+          val tZipped = aList.map(tupleToTuple)
+          val (tLeftList, _) = aList.unzip
+
+          for (tValue <- tTestList) {
+            val tFind = findElement1(tZipped, tValue)
+            if (tFind != null) {
+              assertEquals(tValue, tFind.get1())
+            } else {
+              assertFalse(tLeftList.contains(tValue))
+            }
+
+          }
+          true
+        }
+    }
+  }
+
+  @Test
+  def testFindElement2: Unit = {
+    import org.scalacheck.Gen
+
+    val tIntGen = Gen.choose(0, 1000)
+    val tTupleGen = for (l <- tIntGen; r <- tIntGen) yield (l, r)
+    val tGen = Gen.listOf(tTupleGen)
+
+    forAll(tGen) {
+      (aList: List[(Int, Int)]) =>
+        {
+          val tTestList = (0 to 1000).toList
+          val tZipped = aList.map(tupleToTuple)
+          val (_, tRightList) = aList.unzip
+
+          for (tValue <- tTestList) {
+            val tFind = findElement2(tZipped, tValue)
+            if (tFind != null) {
+              assertEquals(tValue, tFind.get2())
+            } else {
+              assertFalse(tRightList.contains(tValue))
+            }
+
+          }
+          true
+        }
+    }
+  }
+
   private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
     return new Converter[_F, _T] {
       override def convert(aFrom: _F): _T = aFunc(aFrom)
