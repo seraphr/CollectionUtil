@@ -4,6 +4,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.junit.Ignore
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
   import CollectionUtils._
@@ -229,6 +230,10 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
         }
     }
   }
+
+  @Ignore
+  @Test
+  def IgnoreTest: Unit = throw new Exception("must ignore!!")
 
   private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
     return new Converter[_F, _T] {
