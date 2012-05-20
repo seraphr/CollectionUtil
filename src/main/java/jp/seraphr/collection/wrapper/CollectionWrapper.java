@@ -5,6 +5,10 @@ import jp.seraphr.collection.Converter;
 import jp.seraphr.collection.builder.WrapperBuilder;
 
 public abstract class CollectionWrapper<_Base extends Iterable<_Element>, _Element> {
+    public CollectionWrapper(_Base aBase) {
+        super();
+        mBase = aBase;
+    }
 
     private _Base mBase;
 
