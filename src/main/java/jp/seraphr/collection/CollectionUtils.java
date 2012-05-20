@@ -1,10 +1,12 @@
 package jp.seraphr.collection;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import jp.seraphr.collection.builder.Builder;
+import jp.seraphr.collection.builder.ListBuilder;
 
 public final class CollectionUtils {
     private CollectionUtils() {
@@ -12,10 +14,7 @@ public final class CollectionUtils {
     }
 
     public static <_Source, _Dest> List<_Dest> map(List<_Source> aSource, Converter<? super _Source, ? extends _Dest> aConverter) {
-        List<_Dest> tResult = new ArrayList<_Dest>();
-        map(aSource, tResult, aConverter);
-
-        return tResult;
+        return map(aSource, new ListBuilder<_Dest>(), aConverter);
     }
 
     public static <_Source, _Dest> void map(Collection<_Source> aSource, Collection<_Dest> aDest, Converter<? super _Source, ? extends _Dest> aConverter) {
@@ -24,13 +23,21 @@ public final class CollectionUtils {
         }
     }
 
-    public static <_Element> List<_Element> remove(List<_Element> aSource, Predicate<? super _Element> aPredicate){
+    public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<? super _Source, ? extends _Dest> aConverter) {
+        for (_Source tSource : aSource) {
+            aBuilder.add(aConverter.convert(tSource));
+        }
+
+        return aBuilder.build();
+    }
+
+    public static <_Element> List<_Element> remove(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         List<_Element> tResult = new ArrayList<_Element>();
 
         Iterator<_Element> tIterator = aSource.iterator();
-        while(tIterator.hasNext()){
+        while (tIterator.hasNext()) {
             _Element tElement = tIterator.next();
-            if(aPredicate.apply(tElement)){
+            if (aPredicate.apply(tElement)) {
                 tIterator.remove();
                 tResult.add(tElement);
             }
@@ -39,7 +46,7 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<? super _Element> aPredicate){
+    public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         List<_Element> tResult = new ArrayList<_Element>();
         filter(aSource, tResult, aPredicate);
 
@@ -53,32 +60,32 @@ public final class CollectionUtils {
         }
     }
 
-    public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate){
+    public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {
         for (_Element tElement : aSource) {
-            if(aPredicate.apply(tElement))
+            if (aPredicate.apply(tElement))
                 return tElement;
         }
 
         return null;
     }
 
-    public static <_Element> int findIndex(List<_Element> aSource, Predicate<? super _Element> aPredicate){
+    public static <_Element> int findIndex(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         int tLength = aSource.size();
-        for(int i=0; i<tLength; i++){
-            if(aPredicate.apply(aSource.get(i)))
+        for (int i = 0; i < tLength; i++) {
+            if (aPredicate.apply(aSource.get(i)))
                 return i;
         }
 
         return -1;
     }
 
-    public static <_Element> boolean contains(Collection<_Element> aSource, Predicate<? super _Element> aPredicate){
+    public static <_Element> boolean contains(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return find(aSource, aPredicate) != null;
     }
 
-    public static <_Element1, _Element2> boolean contains(Collection<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence){
+    public static <_Element1, _Element2> boolean contains(Collection<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence) {
         final _Element2 tTarget = aTarget;
-        final Equivalence<? super _Element1,? super _Element2> tEquivalence = aEquivalence;
+        final Equivalence<? super _Element1, ? super _Element2> tEquivalence = aEquivalence;
         Predicate<_Element1> tPredicate = new Predicate<_Element1>() {
             @Override
             public boolean apply(_Element1 aTarget) {
@@ -89,7 +96,7 @@ public final class CollectionUtils {
     }
 
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
-    	int tLength = Math.min(aList1.size(), aList2.size());
+        int tLength = Math.min(aList1.size(), aList2.size());
 
         List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
         for (int i = 0; i < tLength; i++) {
@@ -99,7 +106,7 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_E> List<Tuple2<_E, Integer>> zipWithIndex(List<_E> aList){
+    public static <_E> List<Tuple2<_E, Integer>> zipWithIndex(List<_E> aList) {
         List<Tuple2<_E, Integer>> tResult = new ArrayList<Tuple2<_E, Integer>>();
         int tLength = aList.size();
         for (int i = 0; i < tLength; i++) {
@@ -122,7 +129,7 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_E1, _E2> Tuple2<List<_E1>, List<_E2>> unzip(List<Tuple2<_E1, _E2>> aTupleList){
+    public static <_E1, _E2> Tuple2<List<_E1>, List<_E2>> unzip(List<Tuple2<_E1, _E2>> aTupleList) {
         List<_E1> tResult1 = new ArrayList<_E1>();
         List<_E2> tResult2 = new ArrayList<_E2>();
         List<Tuple2<_E1, _E2>> tSource = aTupleList;
