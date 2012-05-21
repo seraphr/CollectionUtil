@@ -1,20 +1,21 @@
 package jp.seraphr.collection.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jp.seraphr.collection.wrapper.ListWrapper;
 
-public class ListWrapperBuilder<_Elem> implements WrapperBuilder<List<_Elem>, _Elem, ListWrapper<_Elem>> {
+public class ListWrapperBuilder<_Elem> implements WrapperBuilder<List<_Elem>, List<_Elem>, _Elem, ListWrapper<_Elem>> {
+    List<_Elem> mList = new ArrayList<_Elem>();
 
     @Override
     public void add(_Elem aElement) {
-        // TODO 自動生成されたメソッド・スタブ
+        mList.add(aElement);
     }
 
     @Override
     public ListWrapper<_Elem> build() {
-        // TODO 自動生成されたメソッド・スタブ
-        return null;
+        return new ListWrapper<_Elem>(mList);
     }
 
 }
