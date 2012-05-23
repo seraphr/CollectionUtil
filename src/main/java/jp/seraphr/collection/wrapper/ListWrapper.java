@@ -27,6 +27,7 @@ public class ListWrapper<_Element> extends CollectionWrapper<List<_Element>, Lis
     protected <_ToBase, _ToIterable extends Iterable<_ToElem>, _ToElem, _To extends CollectionWrapper<_ToBase, _ToIterable, _ToElem>> WrapperBuilder<_ToBase, _ToIterable, _ToElem, _To> builder(_ToBase aDummy, _ToIterable aDummy2) {
         // 高階型引数が無くて、このキャストをなくすことができない…
         // 何故かここでコンパイルエラー・・・？
-        return (WrapperBuilder<_ToBase, _ToIterable, _ToElem, _To>)new ListWrapperBuilder<_ToElem>();
+        WrapperBuilder<_ToBase, _ToIterable, _ToElem, _To> tResult = (WrapperBuilder<_ToBase, _ToIterable, _ToElem, _To>) new ListWrapperBuilder<_ToElem>();
+        return tResult;
     }
 }
