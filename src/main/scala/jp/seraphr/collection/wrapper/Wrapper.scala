@@ -8,9 +8,9 @@ trait Wrapper[_Elem] {
     type _Base
     type _This[X] <: Wrapper[X]
 
-    type To[From, To] = Converter[From, To]
+    def map[_ToElem](aConvertor: Converter[_Elem, _ToElem]): _This[_ToElem]
 
-    protected def mapInner[_ToElem, _ToBase](aConverter: _Elem To _ToElem)(aDummy: _ToBase): _This[_ToElem] = {
+    protected def mapInner[_ToElem, _ToBase](aConverter: Converter[_Elem, _ToElem])(aDummy: _ToBase): _This[_ToElem] = {
         val tBuilder: WrapperBuilder[_ToElem, _This[_ToElem]] = builder
 
         CollectionUtils.map(toIterable(unwrap), tBuilder, aConverter)

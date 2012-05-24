@@ -13,7 +13,7 @@ class ListWrapper[_Elem](aBase: List[_Elem]) extends Wrapper[_Elem] {
 
   import java.util.{ List => JList }
 
-  def map[_ToElem](aConvertor: Converter[_Elem, _ToElem]): _This[_ToElem] = {
+  override def map[_ToElem](aConvertor: Converter[_Elem, _ToElem]): _This[_ToElem] = {
     val tDummy: JList[_ToElem] = Collections.emptyList()
     mapInner(aConvertor)(tDummy)
   }
