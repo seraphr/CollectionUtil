@@ -12,12 +12,12 @@ class ListWrapperTest extends JUnitSuite with Checkers {
   @Ignore
   @Test
   def testMap: Unit = {
-//    check((aList: List[Int]) => {
-//      val tWrapper = new ListWrapper(aList)
-//      val tMapped = tWrapper.map((a: Int) => a * 2)
-//
-//      tMapped.unwrap().asScala.forall(_ % 2 == 0)
-//    })
+    check((aList: List[Int]) => {
+      val tWrapper = new ListWrapper(aList)
+      val tMapped = tWrapper.map((a: Int) => a * 2)
+
+      tMapped.unwrap.asScala.forall(_ % 2 == 0)
+    })
   }
 
   private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
