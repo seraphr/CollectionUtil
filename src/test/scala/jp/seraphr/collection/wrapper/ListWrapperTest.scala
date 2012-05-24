@@ -9,7 +9,6 @@ class ListWrapperTest extends JUnitSuite with Checkers {
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
 
-  @Ignore
   @Test
   def testMap: Unit = {
     check((aList: List[Int]) => {

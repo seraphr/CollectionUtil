@@ -12,7 +12,7 @@ import org.junit.Test;
 public class ListWrapperTestJava {
 
     @Test
-    public void test() {
+    public void testMap() {
         List<String> tList = Arrays.asList("1", "2", "3", "4");
         ListWrapper<String> tWrapper = new ListWrapper<String>(tList);
 
