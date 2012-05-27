@@ -11,6 +11,7 @@ import jp.seraphr.collection.Converter;
 import org.junit.Test;
 
 public class MapWrapperTestJava {
+
     @Test
     public void testMap() {
         Map<Integer, Integer> tMap = new HashMap<Integer, Integer>();
@@ -20,6 +21,7 @@ public class MapWrapperTestJava {
 
 
         MapWrapper<Integer, Integer> tWrapper = new MapWrapper<Integer, Integer>(tMap);
+
 
         MapWrapper<String, String> tMapped = tWrapper.map(new Converter<Map.Entry<Integer, Integer>, Map.Entry<String, String>>() {
             @Override

@@ -15,7 +15,7 @@ import org.junit.Test;
 public class ListWrapperTestJava {
 
     @Test
-    public void testMap() {
+    public void testMapJava() {
         List<String> tList = Arrays.asList("1", "2", "3", "4");
         ListWrapper<String> tWrapper = new ListWrapper<String>(tList);
 

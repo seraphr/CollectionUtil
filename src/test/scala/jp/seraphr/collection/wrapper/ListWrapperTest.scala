@@ -5,7 +5,7 @@ import org.scalatest.prop.Checkers
 import jp.seraphr.collection.Converter
 import org.junit.Ignore
 
-class ListWrapperTest extends JUnitSuite with Checkers {
+class ListWrapperTest extends ListWrapperTestJava with JUnitSuite with Checkers {
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
 
