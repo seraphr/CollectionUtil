@@ -6,19 +6,14 @@ import jp.seraphr.collection.CollectionUtils
 trait Wrapper[_Elem] {
     type _Container[X] <: java.lang.Iterable[X]
     type _Base
-    type _This[X] <: Wrapper[X]
 
-    def map[_ToElem](aConvertor: Converter[_Elem, _ToElem]): _This[_ToElem]
-
-    protected def mapInner[_ToElem, _ToBase](aConverter: Converter[_Elem, _ToElem])(aDummy: _ToBase): _This[_ToElem] = {
-        val tBuilder: WrapperBuilder[_ToElem, _This[_ToElem]] = builder
+    protected def mapInner[_ToElem, _To <: Wrapper[_ToElem]](aConverter: Converter[_Elem, _ToElem])(aBuilder: WrapperBuilder[_ToElem, _To]): _To = {
+        val tBuilder: WrapperBuilder[_ToElem, _To] = aBuilder
 
         CollectionUtils.map(toIterable(unwrap), tBuilder, aConverter)
     }
 
     protected def toIterable(aBase: _Base): _Container[_Elem]
-
-    protected def builder[_ToElem]: WrapperBuilder[_ToElem, _This[_ToElem]]
 
     val unwrap: _Base
 }

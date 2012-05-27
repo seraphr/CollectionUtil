@@ -1,10 +1,8 @@
 package jp.seraphr.collection.wrapper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,25 +10,9 @@ import jp.seraphr.collection.Converter;
 
 import org.junit.Test;
 
-public class ListWrapperTestJava {
-
+public class MapWrapperTestJava {
     @Test
     public void testMap() {
-        List<String> tList = Arrays.asList("1", "2", "3", "4");
-        ListWrapper<String> tWrapper = new ListWrapper<String>(tList);
-
-        List<Integer> tMapped = tWrapper.map(new Converter<String, Integer>() {
-            @Override
-            public Integer convert(String aSource) {
-                return Integer.valueOf(aSource);
-            }
-        }).unwrap();
-
-        assertEquals(Arrays.asList(1, 2, 3, 4), tMapped);
-    }
-
-    @Test
-    public void testMap2() {
         Map<Integer, Integer> tMap = new HashMap<Integer, Integer>();
         tMap.put(1, 2);
         tMap.put(2, 3);
