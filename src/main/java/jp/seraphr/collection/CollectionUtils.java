@@ -31,6 +31,15 @@ public final class CollectionUtils {
         return aBuilder.build();
     }
 
+    /**
+     * 副作用有り。
+     *
+     * @param <_Element>
+     * @param aSource
+     * @param aPredicate
+     * @return
+     * @deprecated つーかこれ消す。 use filterNot
+     */
     public static <_Element> List<_Element> remove(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         List<_Element> tResult = new ArrayList<_Element>();
 
@@ -58,6 +67,17 @@ public final class CollectionUtils {
             if (aPredicate.apply(tElement))
                 aDest.add(tElement);
         }
+    }
+
+    public static <_Element> List<_Element> filterNot(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
+        List<_Element> tResult = new ArrayList<_Element>();
+        filterNot(aSource, tResult, aPredicate);
+
+        return tResult;
+    }
+
+    public static <_Element> void filterNot(Collection<_Element> aSource, Collection<? super _Element> aDest, Predicate<? super _Element> aPredicate) {
+        filter(aSource, aDest, NotPredicate.create(aPredicate));
     }
 
     public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {

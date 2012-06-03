@@ -34,6 +34,17 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   @Test
+  def testFilterNot: Unit = {
+    check((aList: List[Int]) => {
+      val tActual = filterNot(aList, (a: Int) => a % 2 == 0)
+      val tExpected = aList.filterNot(a => a % 2 == 0).asJava
+
+      assertEquals(tExpected, tActual)
+      true
+    })
+  }
+
+  @Test
   def testFind: Unit = {
     import org.scalacheck.Gen
 
