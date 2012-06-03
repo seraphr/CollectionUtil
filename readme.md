@@ -1,8 +1,15 @@
 CollectionUtils
 =====================
 
-まだ作っただけ。
-なんかいつもプロジェクトごとによく作ってる、Java用コレクションライブラリを置く予定。
+Java用コレクションユーティリティライブラリです。
+幾つかの高階関数とか実装してます。
+
+とりあえず絶対必要そうなのは揃った…？
+色々実装方法が迷走していて、scalaのコレクション・フレームワークの凄さを感じている所存。
+
+現在の実装はJava + Scalaです。
+テストのほとんどはScalaTest + ScalaCheckです。
+
 
 CI : https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/
 [![Build Status](https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/badge/icon)](https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/)
