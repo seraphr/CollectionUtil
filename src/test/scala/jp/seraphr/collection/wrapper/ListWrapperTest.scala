@@ -8,6 +8,7 @@ import org.junit.Ignore
 class ListWrapperTest extends ListWrapperTestJava with JUnitSuite with Checkers {
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
+  import jp.seraphr.collection.TestUtils._
 
   @Test
   def testMap: Unit = {
@@ -17,11 +18,5 @@ class ListWrapperTest extends ListWrapperTestJava with JUnitSuite with Checkers 
 
       tMapped.unwrap.asScala.forall(_ % 2 == 0)
     })
-  }
-
-  private implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
-    return new Converter[_F, _T] {
-      override def convert(aFrom: _F): _T = aFunc(aFrom)
-    }
   }
 }
