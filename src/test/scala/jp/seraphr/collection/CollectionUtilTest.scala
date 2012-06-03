@@ -5,6 +5,7 @@ import org.junit.Test
 import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.junit.Ignore
+import java.util.ArrayList
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
   import CollectionUtils._
@@ -117,6 +118,45 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
       true
     })
+  }
+
+  @Test
+  def testFoldLeft: Unit = {
+    check((aList: List[Int]) => {
+      val tExpected = aList.foldLeft(0)(_ + _)
+      val tActual = foldLeft(aList, 0, (a: Tuple2[Int, Int]) => a.get1() + a.get2())
+
+      assertEquals(tExpected, tActual)
+
+      true
+    })
+  }
+
+  @Test
+  def testReduceLeft: Unit = {
+    import org.scalacheck.Gen
+
+    val tGen = Gen.choose(-100000, 100000)
+    val tListGen = (Gen listOf tGen)
+
+    forAll(tListGen.filter(!_.isEmpty)) {
+      (aList: List[Int]) =>
+        {
+          val tExpected = aList.reduceLeft(_ + _)
+          val tActual = reduceLeft(aList, (a: Tuple2[Int, Int]) => a.get1() + a.get2())
+          assertEquals(tExpected, tActual)
+        }
+    }
+  }
+
+  @Test
+  def testReduceLeftAtEmpty: Unit = {
+    try{
+        reduceLeft(new ArrayList[String], (a: Tuple2[String, String]) => a.get2())
+        fail()
+    }catch{
+      case _ =>
+    }
   }
 
   @Test

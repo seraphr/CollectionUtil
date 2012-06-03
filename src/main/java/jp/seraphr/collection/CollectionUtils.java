@@ -1,7 +1,6 @@
 package jp.seraphr.collection;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,7 +52,7 @@ public final class CollectionUtils {
         return filter(aSource, new ListBuilder<_Element>(), aPredicate);
     }
 
-    public static <_Elem, _Result> _Result filter(Collection<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate) {
+    public static <_Elem, _Result> _Result filter(Iterable<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate) {
         for (_Elem tElement : aSource) {
             if (aPredicate.apply(tElement))
                 aBuilder.add(tElement);
@@ -64,10 +63,13 @@ public final class CollectionUtils {
 
     public static <_Element> List<_Element> filterNot(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return filter(aSource, NotPredicate.create(aPredicate));
-
     }
 
-    public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {
+    public static <_Elem, _Result> _Result filterNot(Iterable<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate){
+        return filter(aSource, aBuilder, NotPredicate.create(aPredicate));
+    }
+
+    public static <_Element> _Element find(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
         for (_Element tElement : aSource) {
             if (aPredicate.apply(tElement))
                 return tElement;
@@ -86,11 +88,11 @@ public final class CollectionUtils {
         return -1;
     }
 
-    public static <_Element> boolean contains(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {
+    public static <_Element> boolean contains(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return find(aSource, aPredicate) != null;
     }
 
-    public static <_Element1, _Element2> boolean contains(Collection<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence) {
+    public static <_Element1, _Element2> boolean contains(Iterable<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence) {
         final _Element2 tTarget = aTarget;
         final Equivalence<? super _Element1, ? super _Element2> tEquivalence = aEquivalence;
         Predicate<_Element1> tPredicate = new Predicate<_Element1>() {
@@ -100,6 +102,53 @@ public final class CollectionUtils {
             }
         };
         return contains(aSource, tPredicate);
+    }
+
+    /**
+     * aSourceを畳み込み、_Result型の結果を返します。
+     * 畳込みは先頭側から行われます。
+     *
+     * @param <_Elem>
+     * @param <_Result>
+     * @param aSource 畳み込み対象のコレクション
+     * @param aFirst 畳み込み結果の初期値。 aSourceの長さが0の場合、この値が返る
+     * @param aConverter 畳み込み演算を表すConverter
+     * @return
+     */
+    public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Converter<Tuple2<_Result, _Elem>, _Result> aConverter){
+        _Result tResult = aFirst;
+        for (_Elem tElem : aSource) {
+            tResult = aConverter.convert(Tuple2.create(tResult, tElem));
+        }
+
+        return tResult;
+    }
+
+    /**
+     * aSourceを畳み込み、_Elem型の結果を返します。
+     * 畳込みは先頭側から行われます。
+     *
+     * 畳込みの初期値としてaSourceの先頭要素が使用されます。
+     * aSourceの長さが0の場合例外を発生させます。
+     * aSourceの長さが1の場合先頭の要素を返します。
+     *
+     * @param <_Elem>
+     * @param aSource 畳み込み対象コレクション 長さが0の場合例外
+     * @param aConverter
+     * @return
+     */
+    public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter<Tuple2<_Elem, _Elem>, _Elem> aConverter){
+        Iterator<_Elem> tIterator = aSource.iterator();
+
+        if(!tIterator.hasNext())
+            throw new RuntimeException("aSource has no element.");
+
+        _Elem tResult = tIterator.next();
+        while(tIterator.hasNext()){
+            tResult = aConverter.convert(Tuple2.create(tResult, tIterator.next()));
+        }
+
+        return tResult;
     }
 
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
