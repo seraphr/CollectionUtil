@@ -17,12 +17,6 @@ public final class CollectionUtils {
         return map(aSource, new ListBuilder<_Dest>(), aConverter);
     }
 
-    public static <_Source, _Dest> void map(Collection<_Source> aSource, Collection<_Dest> aDest, Converter<? super _Source, ? extends _Dest> aConverter) {
-        for (_Source tSource : aSource) {
-            aDest.add(aConverter.convert(tSource));
-        }
-    }
-
     public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<? super _Source, ? extends _Dest> aConverter) {
         for (_Source tSource : aSource) {
             aBuilder.add(aConverter.convert(tSource));
@@ -56,28 +50,21 @@ public final class CollectionUtils {
     }
 
     public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
-        List<_Element> tResult = new ArrayList<_Element>();
-        filter(aSource, tResult, aPredicate);
-
-        return tResult;
+        return filter(aSource, new ListBuilder<_Element>(), aPredicate);
     }
 
-    public static <_Element> void filter(Collection<_Element> aSource, Collection<? super _Element> aDest, Predicate<? super _Element> aPredicate) {
-        for (_Element tElement : aSource) {
+    public static <_Elem, _Result> _Result filter(Collection<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate) {
+        for (_Elem tElement : aSource) {
             if (aPredicate.apply(tElement))
-                aDest.add(tElement);
+                aBuilder.add(tElement);
         }
+
+        return aBuilder.build();
     }
 
     public static <_Element> List<_Element> filterNot(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
-        List<_Element> tResult = new ArrayList<_Element>();
-        filterNot(aSource, tResult, aPredicate);
+        return filter(aSource, NotPredicate.create(aPredicate));
 
-        return tResult;
-    }
-
-    public static <_Element> void filterNot(Collection<_Element> aSource, Collection<? super _Element> aDest, Predicate<? super _Element> aPredicate) {
-        filter(aSource, aDest, NotPredicate.create(aPredicate));
     }
 
     public static <_Element> _Element find(Collection<_Element> aSource, Predicate<? super _Element> aPredicate) {
@@ -112,7 +99,7 @@ public final class CollectionUtils {
                 return tEquivalence.apply(aTarget, tTarget);
             }
         };
-        return find(aSource, tPredicate) != null;
+        return contains(aSource, tPredicate);
     }
 
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
