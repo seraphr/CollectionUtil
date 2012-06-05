@@ -8,6 +8,7 @@ import org.scalatest.junit.JUnitSuite
 import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import jp.seraphr.common.Tuple2
+import jp.seraphr.common.Converter
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
   import CollectionUtils._
@@ -20,6 +21,17 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     check((aList: List[Int]) => {
       val tActual = map(aList, (a: Int) => a / 2)
       val tExpected = aList.map(a => a / 2).asJava
+
+      assertEquals(tExpected, tActual)
+      true
+    })
+  }
+
+  @Test
+  def testMap2: Unit = {
+    check((aList: List[String]) => {
+      val tActual = map[String, Int](aList, (a: String) => a.length())
+      val tExpected = aList.map(a => a.length()).asJava
 
       assertEquals(tExpected, tActual)
       true
@@ -180,6 +192,22 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       val tExpected = aList.zipWithIndex.map(tupleToTuple).asJava
 
       assertEquals(tExpected, tZipped)
+      true
+    })
+  }
+
+  @Test
+  def testZip2: Unit = {
+    check((aList1: List[String]) => {
+
+      val tC1: Converter[String, Int] = (a: String) => a.length()
+      val tC2: Converter[String, String] = (a: String) => a.take(1)
+
+      val tZipped = zip[String, Int, String](aList1, tC1, tC2)
+      val tExpedted = zip(map[String, Int](aList1, tC1), map(aList1, tC2))
+
+      assertEquals(tExpedted, tZipped)
+
       true
     })
   }
