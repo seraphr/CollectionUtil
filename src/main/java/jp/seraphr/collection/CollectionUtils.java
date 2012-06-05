@@ -7,6 +7,7 @@ import java.util.List;
 import jp.seraphr.collection.builder.Builder;
 import jp.seraphr.collection.builder.ListBuilder;
 import jp.seraphr.common.Converter;
+import jp.seraphr.common.Converter2;
 import jp.seraphr.common.Equivalence;
 import jp.seraphr.common.NotPredicate;
 import jp.seraphr.common.Predicate;
@@ -123,10 +124,10 @@ public final class CollectionUtils {
      * @param aConverter 畳み込み演算を表すConverter
      * @return
      */
-    public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Converter<Tuple2<_Result, _Elem>, _Result> aConverter){
+    public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Converter2<_Result, _Elem, _Result> aConverter){
         _Result tResult = aFirst;
         for (_Elem tElem : aSource) {
-            tResult = aConverter.convert(Tuple2.create(tResult, tElem));
+            tResult = aConverter.convert(tResult, tElem);
         }
 
         return tResult;
@@ -140,14 +141,13 @@ public final class CollectionUtils {
      * aSourceの長さが0の場合例外を発生させます。
      * aSourceの長さが1の場合先頭の要素を返します。
      *
-     * TODO Tuple2使うのはさすがに微妙なので、あとで変える
      *
      * @param <_Elem>
      * @param aSource 畳み込み対象コレクション 長さが0の場合例外
      * @param aConverter
      * @return
      */
-    public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter<Tuple2<_Elem, _Elem>, _Elem> aConverter){
+    public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter2<_Elem, _Elem, _Elem> aConverter){
         Iterator<_Elem> tIterator = aSource.iterator();
 
         if(!tIterator.hasNext())
@@ -155,7 +155,7 @@ public final class CollectionUtils {
 
         _Elem tResult = tIterator.next();
         while(tIterator.hasNext()){
-            tResult = aConverter.convert(Tuple2.create(tResult, tIterator.next()));
+            tResult = aConverter.convert(tResult, tIterator.next());
         }
 
         return tResult;

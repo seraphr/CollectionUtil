@@ -126,7 +126,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testFoldLeft: Unit = {
     check((aList: List[Int]) => {
       val tExpected = aList.foldLeft(0)(_ + _)
-      val tActual = foldLeft(aList, 0, (a: Tuple2[Int, Int]) => a.get1() + a.get2())
+      val tActual = foldLeft(aList, 0, (a1: Int, a2: Int) => a1 + a2)
 
       assertEquals(tExpected, tActual)
 
@@ -145,7 +145,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           val tExpected = aList.reduceLeft(_ + _)
-          val tActual = reduceLeft(aList, (a: Tuple2[Int, Int]) => a.get1() + a.get2())
+          val tActual = reduceLeft(aList, (a1: Int, a2: Int) => a1 + a2)
           assertEquals(tExpected, tActual)
         }
     }
@@ -154,7 +154,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testReduceLeftAtEmpty: Unit = {
     try{
-        reduceLeft(new ArrayList[String], (a: Tuple2[String, String]) => a.get2())
+        reduceLeft(new ArrayList[String], (a1: String, a2: String) => a2)
         fail()
     }catch{
       case _ =>
