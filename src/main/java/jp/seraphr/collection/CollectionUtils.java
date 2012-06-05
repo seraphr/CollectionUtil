@@ -13,15 +13,39 @@ import jp.seraphr.common.NotPredicate;
 import jp.seraphr.common.Predicate;
 import jp.seraphr.common.Tuple2;
 
+/**
+ * コレクションに対する高階関数群を提供するユーティリティクラスです。
+ * このクラスのユーティリティは注記のない限り、副作用はありません。
+ */
 public final class CollectionUtils {
     private CollectionUtils() {
 
     }
 
+    /**
+     * 与えられたListの要素をそれぞれ{@link Converter} によって変換した、新しいListを作って返します。
+     *
+     * @param <_Source> 変換元要素の型
+     * @param <_Dest> 変換先要素の型
+     * @param aSource 変換元List
+     * @param aConverter 変換関数
+     * @return 変換結果List
+     */
     public static <_Source, _Dest> List<_Dest> map(List<_Source> aSource, Converter<? super _Source, ? extends _Dest> aConverter) {
         return map(aSource, new ListBuilder<_Dest>(), aConverter);
     }
 
+    /**
+     * 与えられたIterableの要素をそれぞれ{@link Converter} によって変換し、変換結果をaBuilderに与えて{@link Builder#build()} 結果を返します。
+     *
+     * @param <_Source> 変換元要素の型
+     * @param <_Dest> 変換先要素の型
+     * @param <_Result> 変換先の型
+     * @param aSource 変換元Iterable
+     * @param aBuilder 結果オブジェクトのビルダ
+     * @param aConverter 要素の変換関数
+     * @return 変換結果オブジェクト
+     */
     public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<? super _Source, ? extends _Dest> aConverter) {
         for (_Source tSource : aSource) {
             aBuilder.add(aConverter.convert(tSource));
@@ -54,10 +78,28 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    /**
+     * 与えられたListの要素のうち、与えられた条件に合致するもののみを含むListを生成して返します。
+     *
+     * @param <_Element> 要素型
+     * @param aSource 元となるList
+     * @param aPredicate 条件関数
+     * @return aPreicateの{@link Predicate#apply(Object)}がtrueを返すもののみを含むリスト
+     */
     public static <_Element> List<_Element> filter(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return filter(aSource, new ListBuilder<_Element>(), aPredicate);
     }
 
+    /**
+     * 与えられたIterableの要素のうち、与えられた条件に合致するもののみをビルダに与え、{@link Builder#build()} 結果を返します。
+     *
+     * @param <_Elem> 要素型
+     * @param <_Result> 結果型
+     * @param aSource 元となるIterable
+     * @param aBuilder 結果オブジェクトのビルダ
+     * @param aPredicate 要件関数
+     * @return aBuilderによって生成されたオブジェクト
+     */
     public static <_Elem, _Result> _Result filter(Iterable<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate) {
         for (_Elem tElement : aSource) {
             if (aPredicate.apply(tElement))
@@ -67,14 +109,44 @@ public final class CollectionUtils {
         return aBuilder.build();
     }
 
+    /**
+     * {@link #filter(List, Predicate)}の逆。
+     * 条件に合致しないもののみを含むListを生成して返します。
+     *
+     * @see #filter(List, Predicate)
+     * @param <_Element>
+     * @param aSource
+     * @param aPredicate
+     * @return
+     */
     public static <_Element> List<_Element> filterNot(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return filter(aSource, NotPredicate.create(aPredicate));
     }
 
+    /**
+     * {@link #filter(Iterable, Builder, Predicate)}の逆。
+     * 条件に合致しないもののみをビルダに与え、{@link Builder#build()} 結果を返します。
+     *
+     * @see #filter(Iterable, Builder, Predicate)
+     * @param <_Elem>
+     * @param <_Result>
+     * @param aSource
+     * @param aBuilder
+     * @param aPredicate
+     * @return
+     */
     public static <_Elem, _Result> _Result filterNot(Iterable<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate){
         return filter(aSource, aBuilder, NotPredicate.create(aPredicate));
     }
 
+    /**
+     * 与えられたIterableの要素内から、与えられた条件に合致するものを探して返します。
+     *
+     * @param <_Element> 要素型
+     * @param aSource 探索対象Iterable
+     * @param aPredicate 条件関数
+     * @return 条件に合致するものがあった場合そのオブジェクト、そうでない場合null
+     */
     public static <_Element> _Element find(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
         for (_Element tElement : aSource) {
             if (aPredicate.apply(tElement))
@@ -84,6 +156,14 @@ public final class CollectionUtils {
         return null;
     }
 
+    /**
+     * 与えられたListの要素内から、与えられた条件に合致するものを探し、その要素番号を返します。
+     *
+     * @param <_Element> 要素型
+     * @param aSource 探索対象List
+     * @param aPredicate 条件関数
+     * @return 条件に合致するものが見つかった場合その要素番号、そうでない場合負の数
+     */
     public static <_Element> int findIndex(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         int tLength = aSource.size();
         for (int i = 0; i < tLength; i++) {
@@ -94,10 +174,28 @@ public final class CollectionUtils {
         return -1;
     }
 
+    /**
+     * 与えられたIterableの要素から、与えられた条件に合致するものが存在するかどうかを返します。
+     *
+     * @param <_Element> 要素型
+     * @param aSource 探索対象Iterable
+     * @param aPredicate 条件関数
+     * @return 条件に合致するものが見つかった場合true
+     */
     public static <_Element> boolean contains(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return find(aSource, aPredicate) != null;
     }
 
+    /**
+     * 与えられたIterableの要素と、与えられた条件オブジェクトを、{@link Equivalence}で確認し、同一性が認められるものが存在するかどうかを返します。
+     *
+     * @param <_Element1> Iterableの要素型
+     * @param <_Element2> 条件オブジェクト型
+     * @param aSource 探索対象Iterable
+     * @param aTarget 条件オブジェクト
+     * @param aEquivalence 同一性検査器
+     * @return 同一性が認められるものが存在したらtrue
+     */
     public static <_Element1, _Element2> boolean contains(Iterable<_Element1> aSource, _Element2 aTarget, Equivalence<? super _Element1, ? super _Element2> aEquivalence) {
         final _Element2 tTarget = aTarget;
         final Equivalence<? super _Element1, ? super _Element2> tEquivalence = aEquivalence;
@@ -114,15 +212,12 @@ public final class CollectionUtils {
      * aSourceを畳み込み、_Result型の結果を返します。
      * 畳込みは先頭側から行われます。
      *
-     * TODO Tuple2使うのはさすがに微妙なので、あとで変える
-     *
-     *
-     * @param <_Elem>
-     * @param <_Result>
+     * @param <_Elem> 要素型
+     * @param <_Result> 結果型
      * @param aSource 畳み込み対象のコレクション
      * @param aFirst 畳み込み結果の初期値。 aSourceの長さが0の場合、この値が返る
-     * @param aConverter 畳み込み演算を表すConverter
-     * @return
+     * @param aConverter 畳み込み演算を表す{@link Converter2}。 {@link Converter2#convert(Object, Object)}の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
+     * @return 畳み込み演算結果
      */
     public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Converter2<_Result, _Elem, _Result> aConverter){
         _Result tResult = aFirst;
@@ -144,7 +239,7 @@ public final class CollectionUtils {
      *
      * @param <_Elem>
      * @param aSource 畳み込み対象コレクション 長さが0の場合例外
-     * @param aConverter
+     * @param aConverter 畳み込み演算を表す{@link Converter2}。 {@link Converter2#convert(Object, Object)}の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
      * @return
      */
     public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter2<_Elem, _Elem, _Elem> aConverter){
@@ -161,6 +256,16 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    /**
+     * ２つのリストから、{@link Tuple2}のリストを生成して返します。
+     * 結果Listの長さは、与えられた２つのリストの長さのうち短い方と同じになります。
+     *
+     * @param <_E1> 一つ目のListの要素型
+     * @param <_E2> 二つ目のListの要素型
+     * @param aList1
+     * @param aList2
+     * @return
+     */
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
         int tLength = Math.min(aList1.size(), aList2.size());
 
@@ -172,6 +277,13 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    /**
+     * 与えられたリストを、(要素, 添字番号)の{@link Tuple2}のリストに変換して返します。
+     *
+     * @param <_E> 要素型
+     * @param aList
+     * @return
+     */
     public static <_E> List<Tuple2<_E, Integer>> zipWithIndex(List<_E> aList) {
         List<Tuple2<_E, Integer>> tResult = new ArrayList<Tuple2<_E, Integer>>();
         int tLength = aList.size();
@@ -182,19 +294,37 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    /**
+     * 与えられたリストの要素を、与えられた２つのConverterで変換し、新しいListを作って返します。
+     *
+     * @param <_Source>
+     * @param <_E1>
+     * @param <_E2>
+     * @param aSourceList
+     * @param aConverter1
+     * @param aConverter2
+     * @return
+     */
     public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<? super _Source, ? extends _E1> aConverter1, Converter<? super _Source, ? extends _E2> aConverter2) {
-        List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
-        List<_Source> tSourcelist = aSourceList;
+        final Converter<? super _Source, ? extends _E1> tConverter1 = aConverter1;
+        final Converter<? super _Source, ? extends _E2> tConverter2 = aConverter2;
 
-        for (_Source tSource : tSourcelist) {
-            _E1 tElement1 = aConverter1.convert(tSource);
-            _E2 tElement2 = aConverter2.convert(tSource);
-            tResult.add(new Tuple2<_E1, _E2>(tElement1, tElement2));
-        }
-
-        return tResult;
+        return map(aSourceList, new Converter<_Source, Tuple2<_E1, _E2>>() {
+            @Override
+            public Tuple2<_E1, _E2> convert(_Source aSource) {
+                return Tuple2.<_E1, _E2>create(tConverter1.convert(aSource), tConverter2.convert(aSource));
+            }
+        });
     }
 
+    /**
+     * {@link Tuple2}のリストから、Tupleの要素を分離した２つのリストを作成して返します。
+     *
+     * @param <_E1>
+     * @param <_E2>
+     * @param aTupleList
+     * @return
+     */
     public static <_E1, _E2> Tuple2<List<_E1>, List<_E2>> unzip(List<Tuple2<_E1, _E2>> aTupleList) {
         List<_E1> tResult1 = new ArrayList<_E1>();
         List<_E2> tResult2 = new ArrayList<_E2>();
