@@ -113,6 +113,9 @@ public final class CollectionUtils {
      * aSourceを畳み込み、_Result型の結果を返します。
      * 畳込みは先頭側から行われます。
      *
+     * TODO Tuple2使うのはさすがに微妙なので、あとで変える
+     *
+     *
      * @param <_Elem>
      * @param <_Result>
      * @param aSource 畳み込み対象のコレクション
@@ -136,6 +139,8 @@ public final class CollectionUtils {
      * 畳込みの初期値としてaSourceの先頭要素が使用されます。
      * aSourceの長さが0の場合例外を発生させます。
      * aSourceの長さが1の場合先頭の要素を返します。
+     *
+     * TODO Tuple2使うのはさすがに微妙なので、あとで変える
      *
      * @param <_Elem>
      * @param aSource 畳み込み対象コレクション 長さが0の場合例外
