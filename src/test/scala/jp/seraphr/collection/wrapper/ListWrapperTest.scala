@@ -2,7 +2,6 @@ package jp.seraphr.collection.wrapper
 import org.scalatest.junit.JUnitSuite
 import org.junit.Test
 import org.scalatest.prop.Checkers
-import jp.seraphr.collection.Converter
 import org.junit.Ignore
 
 class ListWrapperTest extends ListWrapperTestJava with JUnitSuite with Checkers {

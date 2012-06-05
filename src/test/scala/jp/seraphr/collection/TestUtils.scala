@@ -1,4 +1,8 @@
 package jp.seraphr.collection
+import jp.seraphr.common.Converter
+import jp.seraphr.common.Equivalence
+import jp.seraphr.common.Predicate
+import jp.seraphr.common.Tuple2
 
 object TestUtils {
   implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {

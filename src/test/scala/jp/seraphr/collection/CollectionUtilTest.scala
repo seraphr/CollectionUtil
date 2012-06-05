@@ -1,11 +1,13 @@
 package jp.seraphr.collection
-import org.scalatest.junit.JUnitSuite
+import java.util.ArrayList
+
 import org.junit.Assert._
+import org.junit.Ignore
 import org.junit.Test
+import org.scalatest.junit.JUnitSuite
 import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.junit.Ignore
-import java.util.ArrayList
+import jp.seraphr.common.Tuple2
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
   import CollectionUtils._

@@ -1,10 +1,10 @@
 package jp.seraphr.collection.wrapper
 
-import jp.seraphr.collection.Converter
 import jp.seraphr.collection.builder.WrapperBuilder
 import java.util.{ Map => JMap }
 import jp.seraphr.collection.builder.MapWrapperBuilder
 import jp.seraphr.collection.builder.WrapperBuilder
+import jp.seraphr.common.Converter
 
 class MapWrapper[_Key, _Value](aBase: JMap[_Key, _Value]) extends Wrapper[JMap.Entry[_Key, _Value]] {
   type _Container[X] = java.util.Set[X]

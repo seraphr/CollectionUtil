@@ -1,4 +1,4 @@
-package jp.seraphr.collection;
+package jp.seraphr.common;
 
 
 public class Tuple2<_Element1, _Element2> {

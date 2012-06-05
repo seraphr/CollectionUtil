@@ -1,12 +1,12 @@
 package jp.seraphr.collection.wrapper;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jp.seraphr.collection.Converter;
+import jp.seraphr.common.Converter;
 
 import org.junit.Test;
 

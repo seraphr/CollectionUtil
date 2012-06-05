@@ -6,6 +6,11 @@ import java.util.List;
 
 import jp.seraphr.collection.builder.Builder;
 import jp.seraphr.collection.builder.ListBuilder;
+import jp.seraphr.common.Converter;
+import jp.seraphr.common.Equivalence;
+import jp.seraphr.common.NotPredicate;
+import jp.seraphr.common.Predicate;
+import jp.seraphr.common.Tuple2;
 
 public final class CollectionUtils {
     private CollectionUtils() {

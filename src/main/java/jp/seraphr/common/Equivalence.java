@@ -1,4 +1,4 @@
-package jp.seraphr.collection;
+package jp.seraphr.common;
 
 public interface Equivalence<_Left, _Right> {
     /**

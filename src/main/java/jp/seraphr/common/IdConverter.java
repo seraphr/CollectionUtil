@@ -1,7 +1,7 @@
 /**
  *
  */
-package jp.seraphr.collection;
+package jp.seraphr.common;
 
 /**
  * 変換を行わないConverter実装

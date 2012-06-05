@@ -1,9 +1,8 @@
 package jp.seraphr.collection.wrapper
 import jp.seraphr.collection.builder.WrapperBuilder
-import jp.seraphr.collection.Converter
 import jp.seraphr.collection.CollectionUtils
-import jp.seraphr.collection.Predicate
-import jp.seraphr.collection.builder.WrapperBuilder
+import jp.seraphr.common.Converter
+import jp.seraphr.common.Predicate
 
 trait Wrapper[_Elem] {
     type _Container[X] <: java.lang.Iterable[X]
@@ -22,9 +21,7 @@ trait Wrapper[_Elem] {
       CollectionUtils.filterNot(toIterable, myBuilder, aPredicate)
     }
 
-    protected def filterInner[_To <: Wrapper[_Elem]](aPredicate: Predicate[_Elem])( aBuilder: WrapperBuilder[_Elem, _To]): _To = {
-        CollectionUtils.filter(toIterable, aBuilder, aPredicate)
-    }
+//    def foldLeft[_Result](_Result aInitValue, Con)
 
 
     private def toIterable: _Container[_Elem] = toIterable(unwrap)

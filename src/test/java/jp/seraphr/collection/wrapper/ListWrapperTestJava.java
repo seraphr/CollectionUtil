@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jp.seraphr.collection.Converter;
+import jp.seraphr.common.Converter;
 
 import org.junit.Test;
 

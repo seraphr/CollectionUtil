@@ -1,13 +1,8 @@
 package jp.seraphr.collection.wrapper
 
-import jp.seraphr.collection.builder.WrapperBuilder
 import java.util.List
 import jp.seraphr.collection.builder.ListWrapperBuilder
-import jp.seraphr.collection.Converter
-import java.util.Collections
-import jp.seraphr.collection.Predicate
-import jp.seraphr.collection.builder.ListWrapperBuilder
-import jp.seraphr.collection.NotPredicate
+import jp.seraphr.common.Converter
 
 class ListWrapper[_Elem](aBase: List[_Elem]) extends Wrapper[_Elem] {
   type _Container[X] = List[X]
