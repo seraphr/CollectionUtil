@@ -267,14 +267,30 @@ public final class CollectionUtils {
      * @return
      */
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
-        int tLength = Math.min(aList1.size(), aList2.size());
+        return zip(aList1, aList2, new ListBuilder<Tuple2<_E1, _E2>>());
+    }
 
-        List<Tuple2<_E1, _E2>> tResult = new ArrayList<Tuple2<_E1, _E2>>();
-        for (int i = 0; i < tLength; i++) {
-            tResult.add(new Tuple2<_E1, _E2>(aList1.get(i), aList2.get(i)));
+    /**
+     * 2つのIterableから、{@link Tuple2}を生成し、aBuilderに与え、{@link Builder#build()}の結果を返します。
+     *
+     * @param <_E1> 一つ目の要素型
+     * @param <_E2> 二つ目の要素型
+     * @param <_Result> 生成されるコンテナの型
+     * @param aSource1
+     * @param aSource2
+     * @param aBuilder
+     * @return 生成されたコンテナ
+     * @see CollectionUtils#zip(List, List)
+     */
+    public static <_E1, _E2, _Result> _Result zip(Iterable<_E1> aSource1, Iterable<_E2> aSource2, Builder<Tuple2<_E1, _E2>, _Result> aBuilder){
+        Iterator<_E1> tIterator1 = aSource1.iterator();
+        Iterator<_E2> tIterator2 = aSource2.iterator();
+
+        while(tIterator1.hasNext() && tIterator2.hasNext()){
+            aBuilder.add(Tuple2.create(tIterator1.next(), tIterator2.next()));
         }
 
-        return tResult;
+        return aBuilder.build();
     }
 
     /**
