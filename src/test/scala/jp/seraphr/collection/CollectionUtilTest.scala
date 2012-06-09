@@ -136,9 +136,9 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
   @Test
   def testFoldLeft: Unit = {
-    check((aList: List[Int]) => {
-      val tExpected = aList.foldLeft(0)(_ + _)
-      val tActual = foldLeft(aList, 0, (a1: Int, a2: Int) => a1 + a2)
+    check((aList: List[Int], aInit: Short) => {
+      val tExpected = aList.foldLeft(aInit.asInstanceOf[Int])(_ + _)
+      val tActual = foldLeft(aList, aInit.asInstanceOf[Int], (a1: Int, a2: Int) => a1 + a2)
 
       assertEquals(tExpected, tActual)
 
