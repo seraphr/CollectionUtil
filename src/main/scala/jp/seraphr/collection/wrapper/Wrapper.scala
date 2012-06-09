@@ -35,7 +35,7 @@ trait Wrapper[_Elem] {
     CollectionUtils.reduceLeft(toIterable, aConverter)
   }
 
-  private def toIterable: _Container[_Elem] = toIterable(unwrap)
+  private val toIterable: _Container[_Elem] = toIterable(unwrap)
   protected def toIterable(aBase: _Base): _Container[_Elem]
   protected def myBuilder: WrapperBuilder[_Elem, _This]
 
