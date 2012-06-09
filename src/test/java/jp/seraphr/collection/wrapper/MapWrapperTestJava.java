@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import jp.seraphr.common.Converter;
+import jp.seraphr.common.Tuple2;
 
 import org.junit.Test;
 
@@ -23,26 +23,10 @@ public class MapWrapperTestJava {
         MapWrapper<Integer, Integer> tWrapper = new MapWrapper<Integer, Integer>(tMap);
 
 
-        MapWrapper<String, String> tMapped = tWrapper.map(new Converter<Map.Entry<Integer, Integer>, Map.Entry<String, String>>() {
+        MapWrapper<String, String> tMapped = tWrapper.map(new Converter<Tuple2<Integer, Integer>, Tuple2<String, String>>() {
             @Override
-            public Entry<String, String> convert(final Entry<Integer, Integer> aSource) {
-                return new Entry<String, String>() {
-
-                    @Override
-                    public String setValue(String aValue) {
-                        return null;
-                    }
-
-                    @Override
-                    public String getValue() {
-                        return aSource.getValue().toString();
-                    }
-
-                    @Override
-                    public String getKey() {
-                        return aSource.getKey().toString();
-                    }
-                };
+            public Tuple2<String, String> convert(final Tuple2<Integer, Integer> aSource) {
+                return Tuple2.create(aSource.get1().toString(), aSource.get2().toString());
             }
         });
 
