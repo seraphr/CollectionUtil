@@ -13,7 +13,7 @@ import org.junit.Test;
 public class MapWrapperTestJava {
 
     @Test
-    public void testMap() {
+    public void testMapJava() {
         Map<Integer, Integer> tMap = new HashMap<Integer, Integer>();
         tMap.put(1, 2);
         tMap.put(2, 3);

@@ -25,7 +25,7 @@ class ListWrapper[_Elem](aBase: List[_Elem]) extends Wrapper[_Elem] {
 
   override protected def toIterable(aBase: _Base): _Container[_Elem] = {
 //    require(aBase != null)
-    unwrap
+    aBase
   }
 
 }
