@@ -32,4 +32,22 @@ class MapWrapperTest extends MapWrapperTestJava with JUnitSuite with Checkers {
       }
     })
   }
+
+  @Test
+  def testZip: Unit = {
+    def t[_L, _R](l: _L, r: _R) = Tuple2.create(l, r)
+
+    check((aMap1: Map[Int, Int], aMap2: Map[String, String]) => {
+      val tWrapper = new MapWrapper(aMap1)
+      val tZipped = tWrapper.zip(aMap2.asJava)
+
+      val tZ = aMap1.zip(aMap2)
+      val tExpected = tZ.map({
+        case ((ll, lr), (rl, rr)) => (t(ll, lr), t(rl, rr))
+      }).toMap.asJava
+
+      assertEquals(tExpected, tZipped.unwrap)
+      true
+    })
+  }
 }
