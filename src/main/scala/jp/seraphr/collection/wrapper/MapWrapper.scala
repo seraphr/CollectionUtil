@@ -21,6 +21,10 @@ class MapWrapper[_Key, _Value](aBase: Map[_Key, _Value]) extends Wrapper[Tuple2[
     mapInner(aConverter)(new MapWrapperBuilder[_ToKey, _ToElem])
   }
 
+  def zip[_ThatKey, _ThatValue](aThat: Map[_ThatKey, _ThatValue]): MapWrapper[Tuple2[_Key, _Value], Tuple2[_ThatKey, _ThatValue]] = {
+    zip(toTupleIterable(aThat))
+  }
+
   def zip[_ThatElem](aThat: Iterable[_ThatElem]): MapWrapper[Tuple2[_Key, _Value], _ThatElem] = {
     zipInner(aThat)(new MapWrapperBuilder[Tuple2[_Key, _Value], _ThatElem])
   }
@@ -29,10 +33,11 @@ class MapWrapper[_Key, _Value](aBase: Map[_Key, _Value]) extends Wrapper[Tuple2[
 
   override val unwrap = aBase
 
-  def toIterable(aBase: _Base): _Container[Tuple2[_Key, _Value]] = {
+  def toIterable(aBase: _Base): _Container[Tuple2[_Key, _Value]] = toTupleIterable(unwrap)
 
-   CollectionUtils.map(unwrap.entrySet(), new ListBuilder[Tuple2[_Key, _Value]], new Converter[Map.Entry[_Key, _Value], Tuple2[_Key, _Value]](){
-     override def convert(aSource: Map.Entry[_Key, _Value]) = Tuple2.create(aSource.getKey, aSource.getValue)
+  private def toTupleIterable[_K, _V](aBase: Map[_K, _V]) = {
+   CollectionUtils.map(aBase.entrySet(), new ListBuilder[Tuple2[_K, _V]], new Converter[Map.Entry[_K, _V], Tuple2[_K, _V]](){
+     override def convert(aSource: Map.Entry[_K, _V]) = Tuple2.create(aSource.getKey, aSource.getValue)
    })
   }
 }
