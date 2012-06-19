@@ -8,7 +8,7 @@ import org.junit.Assert._
 
 import jp.seraphr.common.Tuple2
 
-class MapWrapperTest extends MapWrapperTestJava with JUnitSuite with Checkers {
+class MapWrapperTest extends JUnitSuite with Checkers {
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
   import jp.seraphr.collection.TestUtils._

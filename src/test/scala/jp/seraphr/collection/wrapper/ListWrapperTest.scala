@@ -5,7 +5,7 @@ import org.junit.Assert._
 import org.scalatest.prop.Checkers
 import jp.seraphr.common.Tuple2
 
-class ListWrapperTest extends ListWrapperTestJava with JUnitSuite with Checkers {
+class ListWrapperTest extends JUnitSuite with Checkers {
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
   import jp.seraphr.collection.TestUtils._
