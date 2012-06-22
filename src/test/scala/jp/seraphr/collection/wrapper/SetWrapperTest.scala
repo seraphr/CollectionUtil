@@ -24,13 +24,24 @@ class SetWrapperTest extends JUnitSuite with Checkers {
 
   @Test
   def testZip: Unit = {
-    check((aList: Set[Int], aList2: Set[String]) => {
-      val tWrapper = new SetWrapper(aList)
-      val tZipped = tWrapper.zip(aList2)
+    check((aSet1: Set[Int], aSet2: Set[String]) => {
+      val tWrapper = new SetWrapper(aSet1)
+      val tZipped = tWrapper.zip(aSet2)
 
-      val tExpected = for((l, r) <- aList.zip(aList2)) yield Tuple2.create(l, r)
+      val tExpected = for((l, r) <- aSet1.zip(aSet2)) yield Tuple2.create(l, r)
 
       assertEquals(tExpected.asJava, tZipped.unwrap)
+      true
+    })
+  }
+
+  @Test
+  def testZip2: Unit = {
+    check((aList: Set[Int]) => {
+      val tWrapper = new SetWrapper(aList)
+      val tZipped = tWrapper.zip(Set().asJava)
+
+      assertEquals(Set().asJava, tZipped.unwrap)
       true
     })
   }
