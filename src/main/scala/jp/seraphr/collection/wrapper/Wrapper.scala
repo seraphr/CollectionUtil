@@ -6,7 +6,7 @@ import jp.seraphr.common.Predicate
 import jp.seraphr.common.Converter2
 import jp.seraphr.common.Tuple2
 
-trait Wrapper[_Elem, _This <: Wrapper[_Elem, _This]] {
+abstract class Wrapper[_Elem, _This <: Wrapper[_Elem, _This]] {
   type _Container[X] <: java.lang.Iterable[X]
   type _Base
 
@@ -33,6 +33,9 @@ trait Wrapper[_Elem, _This <: Wrapper[_Elem, _This]] {
   def reduceLeft(aConverter: Converter2[_Elem, _Elem, _Elem]): _Elem = {
     CollectionUtils.reduceLeft(toIterable, aConverter)
   }
+
+  def getThis: _This = this.asInstanceOf[_This]
+  def getElem: _Elem = toIterable.iterator.next()
 
   private lazy val toIterable: _Container[_Elem] = toIterable(unwrap)
   protected def toIterable(aBase: _Base): _Container[_Elem]
