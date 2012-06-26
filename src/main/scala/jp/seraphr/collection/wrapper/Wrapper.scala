@@ -6,16 +6,15 @@ import jp.seraphr.common.Predicate
 import jp.seraphr.common.Converter2
 import jp.seraphr.common.Tuple2
 
-trait Wrapper[_Elem] {
+trait Wrapper[_Elem, _This <: Wrapper[_Elem, _This]] {
   type _Container[X] <: java.lang.Iterable[X]
   type _Base
-  type _This <: Wrapper[_Elem]
 
-  protected def mapInner[_ToElem, _To <: Wrapper[_ToElem]](aConverter: Converter[_Elem, _ToElem])(aBuilder: WrapperBuilder[_ToElem, _To]): _To = {
+  protected def mapInner[_ToElem, _To <: Wrapper[_ToElem, _To]](aConverter: Converter[_Elem, _ToElem])(aBuilder: WrapperBuilder[_ToElem, _To]): _To = {
     CollectionUtils.map(toIterable, aBuilder, aConverter)
   }
 
-  protected def zipInner[_ThatElem, _To <: Wrapper[Tuple2[_Elem, _ThatElem]]](aThat: java.lang.Iterable[_ThatElem])(aBuilder: WrapperBuilder[Tuple2[_Elem, _ThatElem], _To]): _To = {
+  protected def zipInner[_ThatElem, _To <: Wrapper[Tuple2[_Elem, _ThatElem], _To]](aThat: java.lang.Iterable[_ThatElem])(aBuilder: WrapperBuilder[Tuple2[_Elem, _ThatElem], _To]): _To = {
     CollectionUtils.zip(toIterable, aThat, aBuilder)
   }
 

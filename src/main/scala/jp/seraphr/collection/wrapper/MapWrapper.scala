@@ -10,7 +10,7 @@ import jp.seraphr.common.Tuple2
 import jp.seraphr.collection.CollectionUtils
 import jp.seraphr.collection.builder.ListBuilder
 
-class MapWrapper[_Key, _Value](aBase: Map[_Key, _Value]) extends Wrapper[Tuple2[_Key, _Value]] {
+class MapWrapper[_Key, _Value](aBase: Map[_Key, _Value]) extends Wrapper[Tuple2[_Key, _Value], MapWrapper[_Key, _Value]] {
 
   type _Container[X] = java.lang.Iterable[X]
   type _Base = Map[_Key, _Value]

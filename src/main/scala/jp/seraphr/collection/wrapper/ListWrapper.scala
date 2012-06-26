@@ -6,7 +6,7 @@ import jp.seraphr.collection.builder.ListWrapperBuilder
 import jp.seraphr.common.Converter
 import jp.seraphr.common.Tuple2
 
-class ListWrapper[_Elem](aBase: List[_Elem]) extends Wrapper[_Elem] {
+class ListWrapper[_Elem](aBase: List[_Elem]) extends Wrapper[_Elem, ListWrapper[_Elem]] {
   type _Container[X] = List[X]
   type _Base = List[_Elem]
   type _This = ListWrapper[_Elem]

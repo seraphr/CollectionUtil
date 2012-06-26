@@ -5,7 +5,7 @@ import jp.seraphr.collection.builder.SetWrapperBuilder
 import jp.seraphr.common.Converter
 import jp.seraphr.common.Tuple2
 
-class SetWrapper[_Elem](aBase: Set[_Elem]) extends Wrapper[_Elem] {
+class SetWrapper[_Elem](aBase: Set[_Elem]) extends Wrapper[_Elem, SetWrapper[_Elem]] {
   type _Container[X] = Set[X]
   type _Base = Set[_Elem]
   type _This = SetWrapper[_Elem]
