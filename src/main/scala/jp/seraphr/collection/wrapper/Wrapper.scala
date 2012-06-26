@@ -34,9 +34,6 @@ abstract class Wrapper[_Elem, _This <: Wrapper[_Elem, _This]] {
     CollectionUtils.reduceLeft(toIterable, aConverter)
   }
 
-  def getThis: _This = this.asInstanceOf[_This]
-  def getElem: _Elem = toIterable.iterator.next()
-
   private lazy val toIterable: _Container[_Elem] = toIterable(unwrap)
   protected def toIterable(aBase: _Base): _Container[_Elem]
   protected def myBuilder: WrapperBuilder[_Elem, _This]
