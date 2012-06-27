@@ -20,7 +20,7 @@ Licensed under the "2-clause BSD license"
 Maven
 =====
 
-'''xml
+```xml
   <repositories>
 		<repository>
 			<id>seraph-repo</id>
@@ -36,4 +36,4 @@ Maven
 			<version>0.1.1</version>
 		</dependency>
 	</dependencies>
-'''
+```
