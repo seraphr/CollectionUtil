@@ -15,3 +15,25 @@ CI : https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/
 [![Build Status](https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/badge/icon)](https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/)
 
 Licensed under the "2-clause BSD license"
+
+
+Maven
+=====
+
+```xml
+  <repositories>
+		<repository>
+			<id>seraph-repo</id>
+			<name>seraph-repo</name>
+			<url>http://seraphr.github.com/maven/</url>
+		</repository>
+	</repositories>
+  ...
+  <dependencies>
+		<dependency>
+			<groupId>jp.seraphr</groupId>
+			<artifactId>collection-util</artifactId>
+			<version>0.1.1</version>
+		</dependency>
+	</dependencies>
+```
