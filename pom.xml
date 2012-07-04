@@ -4,7 +4,7 @@
 
 	<groupId>jp.seraphr</groupId>
 	<artifactId>collection-util</artifactId>
-	<version>0.1.2</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 
 	<name>collection</name>
