@@ -17,6 +17,14 @@
 		<maven.scaladoc.vscaladocVersion>1.2-m1</maven.scaladoc.vscaladocVersion>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>seraph-repo</id>
+			<name>seraph-repo</name>
+			<url>http://seraphr.github.com/maven/</url>
+		</repository>
+	</repositories>
+
 	<distributionManagement>
 		<repository>
 			<id>seraph-repository</id>
