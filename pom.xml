@@ -74,6 +74,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>jp.seraphr</groupId>
+			<artifactId>seraph-java-common</artifactId>
+			<version>0.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
 			<version>${scala.version}</version>
