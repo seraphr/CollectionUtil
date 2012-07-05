@@ -7,8 +7,7 @@ Java用コレクションユーティリティライブラリです。
 とりあえず絶対必要そうなのは揃った…？
 色々実装方法が迷走していて、scalaのコレクション・フレームワークの凄さを感じている所存。
 
-現在の実装はJava + Scalaです。
-テストのほとんどはScalaTest + ScalaCheckです。
+ver.0.2 からscalaのコード（wrapper関係）を別プロジェクトに分離
 
 
 CI : https://buildhive.cloudbees.com/job/seraphr/job/CollectionUtil/
