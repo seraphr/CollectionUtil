@@ -117,7 +117,7 @@ public final class CollectionUtils {
      * @param <_Element>
      * @param aSource
      * @param aPredicate
-     * @return
+     * @return filter済みList
      */
     public static <_Element> List<_Element> filterNot(List<_Element> aSource, Predicate<? super _Element> aPredicate) {
         return filter(aSource, NotPredicate.create(aPredicate));
@@ -133,7 +133,7 @@ public final class CollectionUtils {
      * @param aSource
      * @param aBuilder
      * @param aPredicate
-     * @return
+     * @return 生成されたコレクション
      */
     public static <_Elem, _Result> _Result filterNot(Iterable<_Elem> aSource, Builder<_Elem, _Result> aBuilder, Predicate<? super _Elem> aPredicate){
         return filter(aSource, aBuilder, NotPredicate.create(aPredicate));
@@ -240,7 +240,7 @@ public final class CollectionUtils {
      * @param <_Elem>
      * @param aSource 畳み込み対象コレクション 長さが0の場合例外
      * @param aConverter 畳み込み演算を表す{@link Converter2}。 {@link Converter2#convert(Object, Object)}の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
-     * @return
+     * @return 畳い込み演算結果
      */
     public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter2<_Elem, _Elem, _Elem> aConverter){
         Iterator<_Elem> tIterator = aSource.iterator();
@@ -264,7 +264,7 @@ public final class CollectionUtils {
      * @param <_E2> 二つ目のListの要素型
      * @param aList1
      * @param aList2
-     * @return
+     * @return 与えられた2つのリストの結合結果
      */
     public static <_E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_E1> aList1, List<_E2> aList2) {
         return zip(aList1, aList2, new ListBuilder<Tuple2<_E1, _E2>>());
@@ -298,7 +298,7 @@ public final class CollectionUtils {
      *
      * @param <_E> 要素型
      * @param aList
-     * @return
+     * @return (要素, 添字番号)リスト
      */
     public static <_E> List<Tuple2<_E, Integer>> zipWithIndex(List<_E> aList) {
         List<Tuple2<_E, Integer>> tResult = new ArrayList<Tuple2<_E, Integer>>();
@@ -319,7 +319,7 @@ public final class CollectionUtils {
      * @param aSourceList
      * @param aConverter1
      * @param aConverter2
-     * @return
+     * @return zip結合結果List
      */
     public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<? super _Source, ? extends _E1> aConverter1, Converter<? super _Source, ? extends _E2> aConverter2) {
         final Converter<? super _Source, ? extends _E1> tConverter1 = aConverter1;
@@ -339,7 +339,7 @@ public final class CollectionUtils {
      * @param <_E1>
      * @param <_E2>
      * @param aTupleList
-     * @return
+     * @return 分離された2つのリストを含むタプル
      */
     public static <_E1, _E2> Tuple2<List<_E1>, List<_E2>> unzip(List<Tuple2<_E1, _E2>> aTupleList) {
         List<_E1> tResult1 = new ArrayList<_E1>();
