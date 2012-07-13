@@ -1,6 +1,5 @@
 package jp.seraphr.collection
 import java.util.ArrayList
-
 import org.junit.Assert._
 import org.junit.Ignore
 import org.junit.Test
@@ -9,6 +8,7 @@ import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import jp.seraphr.common.Tuple2
 import jp.seraphr.common.Converter
+import jp.seraphr.common.Option
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
   import CollectionUtils._
@@ -57,6 +57,16 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
       assertEquals(tExpected, tActual)
       true
+    })
+  }
+
+  @Test
+  def testCollect: Unit = {
+    check((aList: List[Int]) => {
+      val tConv: Converter[Int, Option[Int]] = (a: Int) => if(a % 2 == 0) Option.none[Int] else Option.some(a * 2)
+      val tActual = collect(aList, tConv)
+
+      tActual.forall(a => a % 2 == 0 && (a / 2) % 2  != 0)
     })
   }
 
