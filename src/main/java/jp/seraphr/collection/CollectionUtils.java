@@ -15,7 +15,8 @@ import jp.seraphr.common.Predicate;
 import jp.seraphr.common.Tuple2;
 
 /**
- * コレクションに対する高階関数群を提供するユーティリティクラスです。 このクラスのユーティリティは注記のない限り、副作用はありません。
+ * コレクションに対する高階関数を含めた便利メソッド群提供するユーティリティクラスです。 <br />
+ * このクラスのユーティリティは注記のない限り、副作用はありません。
  */
 public final class CollectionUtils {
     private CollectionUtils() {
@@ -160,10 +161,13 @@ public final class CollectionUtils {
 
     /**
      * {@link #filter(List, Predicate)}と{@link #map(List, Converter)}を同時に行います。
-     * aConverterの{@linkplain Converter#convert(Object)}がSomeを返すもののみを結果のリストに加えます。
+     * aConverterの{@linkplain Converter#convert(Object)}
+     * がSomeを返すもののみを結果のリストに加えます。
      *
-     * @param aSource 変換元リスト
-     * @param aConverter 変換関数
+     * @param aSource
+     *            変換元リスト
+     * @param aConverter
+     *            変換関数
      * @return 生成されたリスト
      */
     public static <_Source, _Dest> List<_Dest> collect(List<_Source> aSource, Converter<_Source, Option<_Dest>> aConverter) {
@@ -171,12 +175,16 @@ public final class CollectionUtils {
     }
 
     /**
-     * {@link #filter(Iterable, Builder, Predicate)}と{@link #map(Iterable, Builder, Converter)}を同時に行います。
-     * aConverterの{@linkplain Converter#convert(Object)}がSomeを返すもののみを結果のコレクションに加えます。
+     * {@link #filter(Iterable, Builder, Predicate)}と
+     * {@link #map(Iterable, Builder, Converter)}を同時に行います。 aConverterの
+     * {@linkplain Converter#convert(Object)}がSomeを返すもののみを結果のコレクションに加えます。
      *
-     * @param aSource 変換元コレクション
-     * @param aBuilder 結果コレクションビルダ
-     * @param aConverter 変換関数
+     * @param aSource
+     *            変換元コレクション
+     * @param aBuilder
+     *            結果コレクションビルダ
+     * @param aConverter
+     *            変換関数
      * @return 生成されたコレクション
      */
     public static <_Source, _Dest, _Result> _Result collect(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<_Source, Option<_Dest>> aConverter) {
@@ -328,6 +336,26 @@ public final class CollectionUtils {
         }
 
         return tResult;
+    }
+
+    /**
+     * TODO テスト追加
+     *
+     * @param aNested
+     * @return
+     */
+    public static <_Elem, _Nested extends Iterable<_Elem>> List<_Elem> flatten(List<_Nested> aNested){
+        return flatten(aNested, new ListBuilder<_Elem>());
+    }
+
+    public static <_Elem, _Nested extends Iterable<_Elem>, _Result> _Result flatten(Iterable<_Nested> aNested, Builder<_Elem, _Result> aBuilder){
+        for (_Nested tInner : aNested) {
+            for (_Elem tElem : tInner) {
+                aBuilder.add(tElem);
+            }
+        }
+
+        return aBuilder.build();
     }
 
     /**
