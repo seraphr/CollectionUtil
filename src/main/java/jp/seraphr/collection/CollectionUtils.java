@@ -354,6 +354,12 @@ public final class CollectionUtils {
         return Tuple2.create(tResult1, tResult2);
     }
 
+    /**
+     * {@link Tuple2}のリストから、{@linkplain Tuple2#get1()}のみを抽出したリストを生成して返します。
+     *
+     * @param aTupleList 元となるリスト
+     * @return get1の結果のみを含むリスト
+     */
     public static <_E1, _E2> List<_E1> unzip1(List<Tuple2<_E1, _E2>> aTupleList) {
         List<_E1> tResult = new ArrayList<_E1>();
         List<Tuple2<_E1, _E2>> tSource = aTupleList;
@@ -364,6 +370,12 @@ public final class CollectionUtils {
         return tResult;
     }
 
+    /**
+     * {@link Tuple2}のリストから、{@linkplain Tuple2#get2()}のみを抽出したリストを生成して返します。
+     *
+     * @param aTupleList 元となるリスト
+     * @return get2の結果のみを含むリスト
+     */
     public static <_E1, _E2> List<_E2> unzip2(List<Tuple2<_E1, _E2>> aTupleList) {
         List<_E2> tResult = new ArrayList<_E2>();
         List<Tuple2<_E1, _E2>> tSource = aTupleList;
@@ -374,14 +386,30 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement1(List<Tuple2<_E1, _E2>> aTupleList, _E1 aTarget) {
-        int tIndex = findElementIndex1(aTupleList, aTarget);
-        if (tIndex < 0)
-            return Option.none();
-
-        return Option.some(aTupleList.get(tIndex));
+    /**
+     * {@link Tuple2}のコレクションから、{@linkplain Tuple2#get1()}とaTargetが等価であるものを探して返します。
+     *
+     *
+     * @param aTupleList 検索対象となるコレクション
+     * @param aTarget 検索対象
+     * @return {@linkplain Tuple2#get1()}.equals(aTarget)がtrueとなるTuple。 見つからなかった場合はNone
+     */
+    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement1(Iterable<Tuple2<_E1, _E2>> aTupleList, final _E1 aTarget) {
+        return find(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
+            @Override
+            public boolean apply(Tuple2<_E1, _E2> aTuple) {
+                return aTarget.equals(aTuple.get1());
+            }
+        });
     }
 
+    /**
+     * {@link Tuple2}のリストから、{@linkplain Tuple2#get1()}とaTargetが等価であるものを探し、インデックス番号を返します。
+     *
+     * @param aTupleList 検索対象となるリスト
+     * @param aTarget
+     * @return
+     */
     public static <_E1, _E2> int findElementIndex1(List<Tuple2<_E1, _E2>> aTupleList, final _E1 aTarget) {
         return findIndex(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
             @Override
@@ -391,14 +419,30 @@ public final class CollectionUtils {
         });
     }
 
-    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement2(List<Tuple2<_E1, _E2>> aTupleList, _E2 aTarget) {
-        int tIndex = findElementIndex2(aTupleList, aTarget);
-        if (tIndex < 0)
-            return Option.none();
-
-        return Option.some(aTupleList.get(tIndex));
+    /**
+     * {@link Tuple2}のコレクションから、{@linkplain Tuple2#get2()}とaTargetが等価であるものを探して返します。
+     *
+     * @param aTupleList 検索対象となるコレクション
+     * @param aTarget 検索対象
+     * @return {@linkplain Tuple2#get2()}.equals(aTarget)がtrueとなるTuple。 見つからなかった場合はNone
+     */
+    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement2(Iterable<Tuple2<_E1, _E2>> aTupleList, final _E2 aTarget) {
+        return find(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
+            @Override
+            public boolean apply(Tuple2<_E1, _E2> aTuple) {
+                return aTarget.equals(aTuple.get2());
+            }
+        });
     }
 
+
+    /**
+     * {@link Tuple2}のリストから、{@linkplain Tuple2#get2()}とaTargetが等価であるものを探し、インデックス番号を返します。
+     *
+     * @param aTupleList 検索対象となるリスト
+     * @param aTarget
+     * @return
+     */
     public static <_E1, _E2> int findElementIndex2(List<Tuple2<_E1, _E2>> aTupleList, final _E2 aTarget) {
         return findIndex(aTupleList, new Predicate<Tuple2<_E1, _E2>>() {
             @Override
