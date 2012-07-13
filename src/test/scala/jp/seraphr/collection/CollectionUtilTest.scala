@@ -69,7 +69,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           val tList = aList.map(a => a * 2)
-          assertNull(find(tList, (a: Int) => a % 2 != 0))
+          assertNull(find(tList, (a: Int) => a % 2 != 0).getOrNull)
           true
         }
     }
@@ -272,8 +272,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
           for (tValue <- tTestList) {
             val tFind = findElement1(tZipped, tValue)
-            if (tFind != null) {
-              assertEquals(tValue, tFind.get1())
+            if (tFind.isSome) {
+              assertEquals(tValue, tFind.getOrNull.get1())
             } else {
               assertFalse(tLeftList.contains(tValue))
             }
@@ -301,8 +301,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
           for (tValue <- tTestList) {
             val tFind = findElement2(tZipped, tValue)
-            if (tFind != null) {
-              assertEquals(tValue, tFind.get2())
+            if (tFind.isSome) {
+              assertEquals(tValue, tFind.getOrNull.get2())
             } else {
               assertFalse(tRightList.contains(tValue))
             }
