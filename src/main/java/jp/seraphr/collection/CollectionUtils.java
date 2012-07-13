@@ -10,6 +10,7 @@ import jp.seraphr.common.Converter;
 import jp.seraphr.common.Converter2;
 import jp.seraphr.common.Equivalence;
 import jp.seraphr.common.NotPredicate;
+import jp.seraphr.common.Option;
 import jp.seraphr.common.Predicate;
 import jp.seraphr.common.Tuple2;
 
@@ -145,15 +146,15 @@ public final class CollectionUtils {
      * @param <_Element> 要素型
      * @param aSource 探索対象Iterable
      * @param aPredicate 条件関数
-     * @return 条件に合致するものがあった場合そのオブジェクト、そうでない場合null
+     * @return 条件に合致するものがあった場合そのオブジェクト、そうでない場合None
      */
-    public static <_Element> _Element find(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
+    public static <_Element> Option<_Element> find(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
         for (_Element tElement : aSource) {
             if (aPredicate.apply(tElement))
-                return tElement;
+                return Option.some(tElement);
         }
 
-        return null;
+        return Option.none();
     }
 
     /**
@@ -183,7 +184,7 @@ public final class CollectionUtils {
      * @return 条件に合致するものが見つかった場合true
      */
     public static <_Element> boolean contains(Iterable<_Element> aSource, Predicate<? super _Element> aPredicate) {
-        return find(aSource, aPredicate) != null;
+        return find(aSource, aPredicate).isSome();
     }
 
     /**
@@ -373,12 +374,12 @@ public final class CollectionUtils {
         return tResult;
     }
 
-    public static <_E1, _E2> Tuple2<_E1, _E2> findElement1(List<Tuple2<_E1, _E2>> aTupleList, _E1 aTarget) {
+    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement1(List<Tuple2<_E1, _E2>> aTupleList, _E1 aTarget) {
         int tIndex = findElementIndex1(aTupleList, aTarget);
         if (tIndex < 0)
-            return null;
+            return Option.none();
 
-        return aTupleList.get(tIndex);
+        return Option.some(aTupleList.get(tIndex));
     }
 
     public static <_E1, _E2> int findElementIndex1(List<Tuple2<_E1, _E2>> aTupleList, final _E1 aTarget) {
@@ -390,12 +391,12 @@ public final class CollectionUtils {
         });
     }
 
-    public static <_E1, _E2> Tuple2<_E1, _E2> findElement2(List<Tuple2<_E1, _E2>> aTupleList, _E2 aTarget) {
+    public static <_E1, _E2> Option<Tuple2<_E1, _E2>> findElement2(List<Tuple2<_E1, _E2>> aTupleList, _E2 aTarget) {
         int tIndex = findElementIndex2(aTupleList, aTarget);
         if (tIndex < 0)
-            return null;
+            return Option.none();
 
-        return aTupleList.get(tIndex);
+        return Option.some(aTupleList.get(tIndex));
     }
 
     public static <_E1, _E2> int findElementIndex2(List<Tuple2<_E1, _E2>> aTupleList, final _E2 aTarget) {
