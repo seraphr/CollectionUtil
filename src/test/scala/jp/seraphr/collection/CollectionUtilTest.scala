@@ -63,10 +63,10 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testCollect: Unit = {
     check((aList: List[Int]) => {
-      val tConv: Converter[Int, Option[Int]] = (a: Int) => if(a % 2 == 0) Option.none[Int] else Option.some(a * 2)
+      val tConv: Converter[Int, Option[Int]] = (a: Int) => if (a % 2 == 0) Option.none[Int] else Option.some(a * 2)
       val tActual = collect(aList, tConv)
 
-      tActual.forall(a => a % 2 == 0 && (a / 2) % 2  != 0)
+      tActual.forall(a => a % 2 == 0 && (a / 2) % 2 != 0)
     })
   }
 
@@ -175,12 +175,24 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
 
   @Test
   def testReduceLeftAtEmpty: Unit = {
-    try{
-        reduceLeft(new ArrayList[String], (a1: String, a2: String) => a2)
-        fail()
-    }catch{
+    try {
+      reduceLeft(new ArrayList[String], (a1: String, a2: String) => a2)
+      fail()
+    } catch {
       case _ =>
     }
+  }
+
+  @Test
+  def testFlatten: Unit = {
+    check((aList1: List[String], aList2: List[String]) => {
+      val tFlatten = flatten[String, java.util.List[String]](List(aList1.asJava, aList2.asJava).asJava)
+
+      val tExpected = (aList1 ++ aList2).asJava
+      assertEquals(tExpected, tFlatten)
+
+      true
+    })
   }
 
   @Test

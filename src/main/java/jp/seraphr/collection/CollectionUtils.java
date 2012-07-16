@@ -339,17 +339,25 @@ public final class CollectionUtils {
     }
 
     /**
-     * TODO テスト追加
+     * ネストされたリストを平坦化して返します。<br />
+     * List(List(1,2,3), List(4,5,6)) => List(1,2,3,4,5,6)
      *
-     * @param aNested
-     * @return
+     * @param aNested ネストされたリスト
+     * @return 平坦化されたリスト
      */
-    public static <_Elem, _Nested extends Iterable<_Elem>> List<_Elem> flatten(List<_Nested> aNested){
+    public static <_Elem, _NestedElem extends Iterable<_Elem>> List<_Elem> flatten(List<_NestedElem> aNested){
         return flatten(aNested, new ListBuilder<_Elem>());
     }
 
-    public static <_Elem, _Nested extends Iterable<_Elem>, _Result> _Result flatten(Iterable<_Nested> aNested, Builder<_Elem, _Result> aBuilder){
-        for (_Nested tInner : aNested) {
+    /**
+     * ネストされたコレクションを平坦化して返します。
+     *
+     * @param aNested ネストされたコレクション
+     * @param aBuilder 平坦化の際に使用するBuilder
+     * @return aBuilderによって生成された、平坦化されたコレクション
+     */
+    public static <_Elem, _NestedElem extends Iterable<_Elem>, _Result> _Result flatten(Iterable<_NestedElem> aNested, Builder<_Elem, _Result> aBuilder){
+        for (_NestedElem tInner : aNested) {
             for (_Elem tElem : tInner) {
                 aBuilder.add(tElem);
             }
