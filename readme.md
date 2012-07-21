@@ -32,7 +32,7 @@ Maven
 		<dependency>
 			<groupId>jp.seraphr</groupId>
 			<artifactId>collection-util</artifactId>
-			<version>0.3</version>
+			<version>0.4</version>
 		</dependency>
 	</dependencies>
 ```
