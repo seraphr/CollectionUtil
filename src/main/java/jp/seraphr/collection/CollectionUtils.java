@@ -283,6 +283,20 @@ public final class CollectionUtils {
     }
 
     /**
+     * 与えられたコレクションのすべての要素が、与えられた条件をみたす({@linkplain Predicate#apply(Object)}
+     * がtrueを返す)かどうかを検査します。
+     *
+     * @param aSource
+     *            検査対象コレクション
+     * @param aPredicate
+     *            条件
+     * @return すべての要素が条件を充たす場合true そうでない場合false
+     */
+    public static <_Elem> boolean forAll(Iterable<_Elem> aSource, Predicate<? super _Elem> aPredicate) {
+        return find(aSource, NotPredicate.create(aPredicate)).isNone();
+    }
+
+    /**
      * aSourceを畳み込み、_Result型の結果を返します。 畳込みは先頭側から行われます。
      *
      * @param <_Elem>
@@ -342,21 +356,24 @@ public final class CollectionUtils {
      * ネストされたリストを平坦化して返します。<br />
      * List(List(1,2,3), List(4,5,6)) => List(1,2,3,4,5,6)
      *
-     * @param aNested ネストされたリスト
+     * @param aNested
+     *            ネストされたリスト
      * @return 平坦化されたリスト
      */
-    public static <_Elem, _NestedElem extends Iterable<_Elem>> List<_Elem> flatten(List<_NestedElem> aNested){
+    public static <_Elem, _NestedElem extends Iterable<_Elem>> List<_Elem> flatten(List<_NestedElem> aNested) {
         return flatten(aNested, new ListBuilder<_Elem>());
     }
 
     /**
      * ネストされたコレクションを平坦化して返します。
      *
-     * @param aNested ネストされたコレクション
-     * @param aBuilder 平坦化の際に使用するBuilder
+     * @param aNested
+     *            ネストされたコレクション
+     * @param aBuilder
+     *            平坦化の際に使用するBuilder
      * @return aBuilderによって生成された、平坦化されたコレクション
      */
-    public static <_Elem, _NestedElem extends Iterable<_Elem>, _Result> _Result flatten(Iterable<_NestedElem> aNested, Builder<_Elem, _Result> aBuilder){
+    public static <_Elem, _NestedElem extends Iterable<_Elem>, _Result> _Result flatten(Iterable<_NestedElem> aNested, Builder<_Elem, _Result> aBuilder) {
         for (_NestedElem tInner : aNested) {
             for (_Elem tElem : tInner) {
                 aBuilder.add(tElem);
@@ -579,5 +596,49 @@ public final class CollectionUtils {
                 return aTuple.get2().equals(aTarget);
             }
         });
+    }
+
+    /**
+     * 与えられたコレクションを文字列化します。
+     *
+     * @param aSource 文字列化するコレクション
+     * @param aStart 先頭につける文字列
+     * @param aSep 要素の間につける文字列
+     * @param aEnd 最後につける文字列
+     * @return 生成された文字列
+     */
+    public static String mkString(Iterable<?> aSource, String aStart, String aSep, String aEnd) {
+        return appendString(new StringBuilder(), aSource, aStart, aSep, aEnd).toString();
+    }
+
+    /**
+     * 与えられたコレクションを文字列化し、与えられた{@linkplain StringBuilder}に追加します。
+     *
+     * @param aBuilder 文字を追加するBuilder
+     * @param aSource 文字列化するコレクション
+     * @param aStart 先頭につける文字列
+     * @param aSep 要素の間につける文字列
+     * @param aEnd 最後につける文字列
+     * @return aBuilderと同じインスタンス
+     */
+    public static StringBuilder appendString(StringBuilder aBuilder, Iterable<?> aSource, String aStart, String aSep, String aEnd) {
+        boolean tIsFirst = true;
+
+        StringBuilder tBuilder = aBuilder;
+        tBuilder.append(aStart);
+
+        for (Object tObject : aSource) {
+            if (tIsFirst) {
+                tIsFirst = false;
+            } else {
+                tBuilder.append(aSep);
+            }
+
+            tBuilder.append(tObject.toString());
+        }
+
+        tBuilder.append(aEnd);
+
+        return tBuilder;
     }
 }

@@ -145,6 +145,24 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   @Test
+  def testForAll: Unit = {
+    import org.scalacheck.Gen
+    val tGen = Gen listOf Gen.choose(Int.MinValue / 2, Int.MaxValue / 2).map(_ * 2)
+    forAll(tGen) {
+      (aList: List[Int]) =>
+        {
+          CollectionUtils.forAll(aList.asJava, (a: Int) => a % 2 == 0)
+        }
+    }
+    forAll(tGen) {
+      (aList: List[Int]) =>
+        {
+          !CollectionUtils.forAll((1 :: aList).asJava, (a: Int) => a % 2 == 0)
+        }
+    }
+  }
+
+  @Test
   def testFoldLeft: Unit = {
     check((aList: List[Int], aInit: Short) => {
       val tExpected = aList.foldLeft(aInit.asInstanceOf[Int])(_ + _)
@@ -335,8 +353,29 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     }
   }
 
-  @Ignore
   @Test
-  def IgnoreTest: Unit = throw new Exception("must ignore!!")
+  def testMkString: Unit ={
+    check((aList: List[String]) => {
+      val tExpected = aList.mkString("[[", ", ", "]]")
+      val tActual = mkString(aList.asJava, "[[", ", ", "]]")
+      assertEquals(tExpected, tActual)
+
+      true
+    })
+  }
+
+  @Test
+  def testAppendString: Unit ={
+    check((aList: List[String]) => {
+      val tExpected = "prefix " + aList.mkString("[[", ", ", "]]")
+
+      val tStringBuilder = new java.lang.StringBuilder
+      tStringBuilder.append("prefix ")
+      val tActual = appendString(tStringBuilder, aList.asJava, "[[", ", ", "]]").toString()
+      assertEquals(tExpected, tActual)
+
+      true
+    })
+  }
 
 }
