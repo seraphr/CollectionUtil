@@ -1,14 +1,18 @@
 package jp.seraphr.collection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import jp.seraphr.collection.builder.Builder;
 import jp.seraphr.collection.builder.ListBuilder;
 import jp.seraphr.common.Converter;
 import jp.seraphr.common.Converter2;
 import jp.seraphr.common.Equivalence;
+import jp.seraphr.common.Function0;
 import jp.seraphr.common.NotPredicate;
 import jp.seraphr.common.Option;
 import jp.seraphr.common.Predicate;
@@ -64,6 +68,15 @@ public final class CollectionUtils {
         }
 
         return aBuilder.build();
+    }
+
+    public static <_Key, _Before, _After> Map<_Key, _After> mapValue(Map<_Key, _Before> aSource, Converter<? super _Before, ? extends _After> aConverter) {
+        Map<_Key, _After> tResult = new HashMap<_Key, _After>();
+        for(Entry<_Key, _Before> tEntry : aSource.entrySet()){
+            tResult.put(tEntry.getKey(), aConverter.convert(tEntry.getValue()));
+        }
+
+        return tResult;
     }
 
     /**
@@ -384,6 +397,57 @@ public final class CollectionUtils {
     }
 
     /**
+     * 与えられたリストを、与えられた関数による変換を用いてグループ化します。
+     *
+     * @param aSource
+     * @param aConverter
+     * @return
+     */
+    public static <_E, _Key> Map<_Key, List<_E>> groupBy(final List<_E> aSource, final Converter<_E, _Key> aConverter){
+        return groupBy(aSource, aConverter, new Function0<Builder<_E, List<_E>>>(){
+            @Override
+            public Builder<_E, List<_E>> apply() {
+                return new ListBuilder<_E>();
+            }
+        });
+    }
+
+    /**
+     * 与えられたコレクションを、与えられた関数による変換を用いてグループ化します。
+     *
+     * @param aSource グループ化対象コレクション
+     * @param aConverter グループ化の方法を定義する関数
+     * @param aBuilderProvider 『結果Valueの生成器』の供給機
+     * @return
+     */
+    public static <_E, _Key, _Result> Map<_Key, _Result> groupBy(final Iterable<_E> aSource, final Converter<_E, _Key> aConverter, final Function0<Builder<_E, _Result>> aBuilderProvider) {
+        Map<_Key, Builder<_E, _Result>> tKeyMap = new HashMap<_Key, Builder<_E, _Result>>();
+
+        for (_E tElem : aSource) {
+            _Key tKey = aConverter.convert(tElem);
+            Builder<_E, _Result> tBuilder = getBuilder(tKeyMap, tKey, aBuilderProvider);
+            tBuilder.add(tElem);
+        }
+
+        return mapValue(tKeyMap, new Converter<Builder<_E, _Result>, _Result>(){
+            @Override
+            public _Result convert(Builder<_E, _Result> aSource) {
+                return aSource.build();
+            }
+        });
+    }
+
+    private static <_E, _Key, _Result> Builder<_E, _Result> getBuilder(final Map<_Key, Builder<_E, _Result>> aKeyMap, final _Key aKey, final Function0<Builder<_E, _Result>> aBuilderProvider) {
+        Builder<_E, _Result> tBuilder = aKeyMap.get(aKey);
+        if (tBuilder == null) {
+            tBuilder = aBuilderProvider.apply();
+            aKeyMap.put(aKey, tBuilder);
+        }
+
+        return tBuilder;
+    }
+
+    /**
      * ２つのリストから、{@link Tuple2}のリストを生成して返します。
      * 結果Listの長さは、与えられた２つのリストの長さのうち短い方と同じになります。
      *
@@ -601,10 +665,14 @@ public final class CollectionUtils {
     /**
      * 与えられたコレクションを文字列化します。
      *
-     * @param aSource 文字列化するコレクション
-     * @param aStart 先頭につける文字列
-     * @param aSep 要素の間につける文字列
-     * @param aEnd 最後につける文字列
+     * @param aSource
+     *            文字列化するコレクション
+     * @param aStart
+     *            先頭につける文字列
+     * @param aSep
+     *            要素の間につける文字列
+     * @param aEnd
+     *            最後につける文字列
      * @return 生成された文字列
      */
     public static String mkString(Iterable<?> aSource, String aStart, String aSep, String aEnd) {
@@ -614,11 +682,16 @@ public final class CollectionUtils {
     /**
      * 与えられたコレクションを文字列化し、与えられた{@linkplain StringBuilder}に追加します。
      *
-     * @param aBuilder 文字を追加するBuilder
-     * @param aSource 文字列化するコレクション
-     * @param aStart 先頭につける文字列
-     * @param aSep 要素の間につける文字列
-     * @param aEnd 最後につける文字列
+     * @param aBuilder
+     *            文字を追加するBuilder
+     * @param aSource
+     *            文字列化するコレクション
+     * @param aStart
+     *            先頭につける文字列
+     * @param aSep
+     *            要素の間につける文字列
+     * @param aEnd
+     *            最後につける文字列
      * @return aBuilderと同じインスタンス
      */
     public static StringBuilder appendString(StringBuilder aBuilder, Iterable<?> aSource, String aStart, String aSep, String aEnd) {

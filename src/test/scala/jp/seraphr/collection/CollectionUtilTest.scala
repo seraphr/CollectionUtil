@@ -214,6 +214,18 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   @Test
+  def testGroupBy: Unit ={
+    check((aList: List[String]) =>{
+        val tMapped = groupBy(aList.asJava, (_: String).length)
+        val tExpected = aList.groupBy(_.length()).mapValues(_.asJava).asJava
+
+        assertEquals(tExpected, tMapped)
+
+        true
+    })
+  }
+
+  @Test
   def testZip: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
       val tZipped = zip(aList1, aList2)
