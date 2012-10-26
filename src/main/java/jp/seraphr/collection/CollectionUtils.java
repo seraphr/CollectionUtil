@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import jp.seraphr.collection.builder.Builder;
 import jp.seraphr.collection.builder.ListBuilder;
+import jp.seraphr.collection.builder.MapBuilder;
 import jp.seraphr.common.Converter;
 import jp.seraphr.common.Converter2;
 import jp.seraphr.common.Equivalence;
@@ -70,6 +71,13 @@ public final class CollectionUtils {
         return aBuilder.build();
     }
 
+    /**
+     * 対象MapのValueのValueのみを与えられたコンバータを用いて変換します。
+     *
+     * @param aSource
+     * @param aConverter
+     * @return
+     */
     public static <_Key, _Before, _After> Map<_Key, _After> mapValue(Map<_Key, _Before> aSource, Converter<? super _Before, ? extends _After> aConverter) {
         Map<_Key, _After> tResult = new HashMap<_Key, _After>();
         for(Entry<_Key, _Before> tEntry : aSource.entrySet()){
@@ -445,6 +453,68 @@ public final class CollectionUtils {
         }
 
         return tBuilder;
+    }
+
+    /**
+     * 対象コレクションを、与えられたBuilderを使用して変換します。
+     *
+     * @param aSource
+     * @param aBuilder
+     * @return
+     */
+    public static <_E, _Result> _Result to(final Iterable<_E> aSource, final Builder<_E, _Result> aBuilder){
+        // map使えばできるけど、Converter噛ますコストを払いたくないので
+        for (_E tE : aSource) {
+            aBuilder.add(tE);
+        }
+
+        return aBuilder.build();
+    }
+
+    /**
+     * 対象のMapをTupleのコレクションに変換します。
+     *
+     * @param aSource
+     * @param aBuilder
+     * @return
+     */
+    public static <_K, _V, _Result> _Result to(final Map<_K, _V> aSource, final Builder<Tuple2<_K, _V>, _Result> aBuilder){
+        return map(aSource.entrySet(), aBuilder, new Converter<Entry<_K, _V>, Tuple2<_K, _V>>() {
+            @Override
+            public Tuple2<_K, _V> convert(Entry<_K, _V> aSource) {
+                return Tuple2.create(aSource.getKey(), aSource.getValue());
+            }
+        });
+    }
+
+    /**
+     * 対象コレクションをリストに変換します
+     *
+     * @param aSource
+     * @return
+     */
+    public static <_E> List<_E> toList(final Iterable<_E> aSource){
+        return to(aSource, new ListBuilder<_E>());
+    }
+
+    /**
+     * 対象のMapをTupleのリストに変換します。
+     *
+     * @param aSource
+     * @return
+     */
+    public static <_K, _V> List<Tuple2<_K, _V>> toList(Map<_K, _V> aSource){
+        return to(aSource, new ListBuilder<Tuple2<_K, _V>>());
+    }
+
+    /**
+     * 対象のタプルコレクションをMapに変換する
+     *
+     * @param aSource
+     * @return
+     */
+    public static <_K, _V> Map<_K, _V> toMap(final Iterable<Tuple2<_K, _V>> aSource){
+        return to(aSource, new MapBuilder<_K, _V>());
     }
 
     /**

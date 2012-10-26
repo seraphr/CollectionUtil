@@ -9,8 +9,10 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import jp.seraphr.common.Tuple2
 import jp.seraphr.common.Converter
 import jp.seraphr.common.Option
+import org.scalacheck.Gen
+import org.scalatest.matchers.ShouldMatchers
 
-class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks {
+class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks with ShouldMatchers {
   import CollectionUtils._
   import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
@@ -80,7 +82,6 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
         {
           val tList = aList.map(a => a * 2)
           assertNull(find(tList, (a: Int) => a % 2 != 0).getOrNull)
-          true
         }
     }
 
@@ -111,8 +112,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testContains: Unit = {
     check((aList: List[Int]) => {
       for (v <- aList) {
-        assertTrue(contains(aList, (a: Int) => a == v))
-        assertFalse(contains(aList.remove(a => a == v), (a: Int) => a == v))
+        contains(aList, (a: Int) => a == v) should be (true)
+        contains(aList.remove(a => a == v), (a: Int) => a == v)  should be (false)
       }
 
       true
@@ -124,10 +125,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           for (v <- aList) {
-            assertFalse(contains(aList, (a: Int) => a < 0))
+            contains(aList, (a: Int) => a < 0) should be (false)
           }
-
-          true
         }
     }
   }
@@ -151,13 +150,15 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     forAll(tGen) {
       (aList: List[Int]) =>
         {
-          CollectionUtils.forAll(aList.asJava, (a: Int) => a % 2 == 0)
+          val tResult = CollectionUtils.forAll(aList.asJava, (a: Int) => a % 2 == 0)
+          tResult should be(true)
         }
     }
     forAll(tGen) {
       (aList: List[Int]) =>
         {
-          !CollectionUtils.forAll((1 :: aList).asJava, (a: Int) => a % 2 == 0)
+          val tResult = CollectionUtils.forAll((1 :: aList).asJava, (a: Int) => a % 2 == 0)
+          tResult should be(false)
         }
     }
   }
@@ -214,14 +215,52 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   @Test
-  def testGroupBy: Unit ={
-    check((aList: List[String]) =>{
-        val tMapped = groupBy(aList.asJava, (_: String).length)
-        val tExpected = aList.groupBy(_.length()).mapValues(_.asJava).asJava
+  def testGroupBy: Unit = {
+    check((aList: List[String]) => {
+      val tMapped = groupBy(aList.asJava, (_: String).length)
+      val tExpected = aList.groupBy(_.length()).mapValues(_.asJava).asJava
 
-        assertEquals(tExpected, tMapped)
+      assertEquals(tExpected, tMapped)
 
-        true
+      true
+    })
+  }
+
+  @Test
+  def testToList: Unit = {
+    check((aSet: Set[String]) => {
+      val tList = toList(aSet.asJava)
+      val tExpected = aSet.toList.asJava
+
+      assertEquals(tExpected, tList)
+      true;
+    })
+  }
+
+  @Test
+  def testMapToList: Unit = {
+    check((aMap: Map[Int, String]) => {
+      val tMap = aMap.asJava
+      val tList = toList(tMap)
+      val tExpected = aMap.toList.map({ case (k, v) => Tuple2.create(k, v) }).asJava
+
+      assertEquals(tExpected, tList)
+      true
+    })
+  }
+
+  def testToMap: Unit = {
+    val tGen = for {
+      k <- Gen.identifier
+      v <- Gen.identifier
+    } yield Tuple2.create(k, v)
+
+    forAll(Gen.listOf(tGen))(aList => {
+      val tList = aList.distinct
+      val tMap = toMap(tList.asJava)
+      val tExpected = tList.map(a => (a.get1(), a.get2())).toMap.asJava
+
+      assertEquals(tExpected, tList)
     })
   }
 
@@ -331,7 +370,6 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
             }
 
           }
-          true
         }
     }
   }
@@ -360,13 +398,12 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
             }
 
           }
-          true
         }
     }
   }
 
   @Test
-  def testMkString: Unit ={
+  def testMkString: Unit = {
     check((aList: List[String]) => {
       val tExpected = aList.mkString("[[", ", ", "]]")
       val tActual = mkString(aList.asJava, "[[", ", ", "]]")
@@ -377,7 +414,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   }
 
   @Test
-  def testAppendString: Unit ={
+  def testAppendString: Unit = {
     check((aList: List[String]) => {
       val tExpected = "prefix " + aList.mkString("[[", ", ", "]]")
 
