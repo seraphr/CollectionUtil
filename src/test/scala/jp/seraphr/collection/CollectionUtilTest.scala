@@ -198,7 +198,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       reduceLeft(new ArrayList[String], (a1: String, a2: String) => a2)
       fail()
     } catch {
-      case _ =>
+      case _: Throwable =>
     }
   }
 
