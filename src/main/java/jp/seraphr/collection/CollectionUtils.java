@@ -65,7 +65,7 @@ public final class CollectionUtils {
      */
     public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Function<? super _Source, ? extends _Dest> aFunction) {
         for (_Source tSource : aSource) {
-            aBuilder.add(aFunction.convert(tSource));
+            aBuilder.add(aFunction.apply(tSource));
         }
 
         return aBuilder.build();
@@ -83,7 +83,7 @@ public final class CollectionUtils {
 
     public static <_Source, _Dest, _Result> _Result flatMap(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder,  Function<? super _Source, ? extends Iterable<? extends _Dest>> aFunction){
         for (_Source tSource : aSource) {
-            Iterable<? extends _Dest> tMapped = aFunction.convert(tSource);
+            Iterable<? extends _Dest> tMapped = aFunction.apply(tSource);
             for (_Dest tDest : tMapped) {
                 aBuilder.add(tDest);
             }
@@ -102,7 +102,7 @@ public final class CollectionUtils {
     public static <_Key, _Before, _After> Map<_Key, _After> mapValue(Map<_Key, _Before> aSource, Function<? super _Before, ? extends _After> aFunction) {
         Map<_Key, _After> tResult = new HashMap<_Key, _After>();
         for(Entry<_Key, _Before> tEntry : aSource.entrySet()){
-            tResult.put(tEntry.getKey(), aFunction.convert(tEntry.getValue()));
+            tResult.put(tEntry.getKey(), aFunction.apply(tEntry.getValue()));
         }
 
         return tResult;
@@ -203,7 +203,7 @@ public final class CollectionUtils {
 
     /**
      * {@link #filter(List, Predicate)}と{@link #map(List, Function)}を同時に行います。
-     * aFunctionの{@linkplain Function#convert(Object)}
+     * aFunctionの{@linkplain Function#apply(Object)}
      * がSomeを返すもののみを結果のリストに加えます。
      *
      * @param aSource
@@ -219,7 +219,7 @@ public final class CollectionUtils {
     /**
      * {@link #filter(Iterable, Builder, Predicate)}と
      * {@link #map(Iterable, Builder, Function)}を同時に行います。 aFunctionの
-     * {@linkplain Function#convert(Object)}がSomeを返すもののみを結果のコレクションに加えます。
+     * {@linkplain Function#apply(Object)}がSomeを返すもののみを結果のコレクションに加えます。
      *
      * @param aSource
      *            変換元コレクション
@@ -231,7 +231,7 @@ public final class CollectionUtils {
      */
     public static <_Source, _Dest, _Result> _Result collect(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Function<_Source, Option<_Dest>> aFunction) {
         for (_Source tSource : aSource) {
-            Option<_Dest> tOption = aFunction.convert(tSource);
+            Option<_Dest> tOption = aFunction.apply(tSource);
             if (tOption.isSome()) {
                 aBuilder.add(tOption.getOrNull());
             }
@@ -351,14 +351,14 @@ public final class CollectionUtils {
      *            畳み込み結果の初期値。 aSourceの長さが0の場合、この値が返る
      * @param aFunction
      *            畳み込み演算を表す{@link Function2}。
-     *            {@link Function2#convert(Object, Object)}
+     *            {@link Function2#apply(Object, Object)}
      *            の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
      * @return 畳み込み演算結果
      */
     public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Function2<_Result, _Elem, _Result> aFunction) {
         _Result tResult = aFirst;
         for (_Elem tElem : aSource) {
-            tResult = aFunction.convert(tResult, tElem);
+            tResult = aFunction.apply(tResult, tElem);
         }
 
         return tResult;
@@ -376,7 +376,7 @@ public final class CollectionUtils {
      *            畳み込み対象コレクション 長さが0の場合例外
      * @param aFunction
      *            畳み込み演算を表す{@link Function2}。
-     *            {@link Function2#convert(Object, Object)}
+     *            {@link Function2#apply(Object, Object)}
      *            の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
      * @return 畳い込み演算結果
      */
@@ -388,7 +388,7 @@ public final class CollectionUtils {
 
         _Elem tResult = tIterator.next();
         while (tIterator.hasNext()) {
-            tResult = aFunction.convert(tResult, tIterator.next());
+            tResult = aFunction.apply(tResult, tIterator.next());
         }
 
         return tResult;
@@ -453,14 +453,14 @@ public final class CollectionUtils {
         Map<_Key, Builder<_E, _Result>> tKeyMap = new HashMap<_Key, Builder<_E, _Result>>();
 
         for (_E tElem : aSource) {
-            _Key tKey = aFunction.convert(tElem);
+            _Key tKey = aFunction.apply(tElem);
             Builder<_E, _Result> tBuilder = getBuilder(tKeyMap, tKey, aBuilderProvider);
             tBuilder.add(tElem);
         }
 
         return mapValue(tKeyMap, new Function<Builder<_E, _Result>, _Result>(){
             @Override
-            public _Result convert(Builder<_E, _Result> aSource) {
+            public _Result apply(Builder<_E, _Result> aSource) {
                 return aSource.build();
             }
         });
@@ -502,7 +502,7 @@ public final class CollectionUtils {
     public static <_K, _V, _Result> _Result to(final Map<_K, _V> aSource, final Builder<Tuple2<_K, _V>, _Result> aBuilder){
         return map(aSource.entrySet(), aBuilder, new Function<Entry<_K, _V>, Tuple2<_K, _V>>() {
             @Override
-            public Tuple2<_K, _V> convert(Entry<_K, _V> aSource) {
+            public Tuple2<_K, _V> apply(Entry<_K, _V> aSource) {
                 return Tuple2.create(aSource.getKey(), aSource.getValue());
             }
         });
@@ -616,8 +616,8 @@ public final class CollectionUtils {
 
         return map(aSourceList, new Function<_Source, Tuple2<_E1, _E2>>() {
             @Override
-            public Tuple2<_E1, _E2> convert(_Source aSource) {
-                return Tuple2.<_E1, _E2> create(tFunction1.convert(aSource), tFunction2.convert(aSource));
+            public Tuple2<_E1, _E2> apply(_Source aSource) {
+                return Tuple2.<_E1, _E2> create(tFunction1.apply(aSource), tFunction2.apply(aSource));
             }
         });
     }
