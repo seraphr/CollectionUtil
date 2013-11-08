@@ -72,6 +72,27 @@ public final class CollectionUtils {
     }
 
     /**
+     *
+     * @param aSource
+     * @param aFunction
+     * @return
+     */
+    public static <_Source, _Dest> List<_Dest> flatMap(List<_Source> aSource, Function<? super _Source, ? extends Iterable<? extends _Dest>> aFunction) {
+        return flatMap(aSource, new ListBuilder<_Dest>(), aFunction);
+    }
+
+    public static <_Source, _Dest, _Result> _Result flatMap(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder,  Function<? super _Source, ? extends Iterable<? extends _Dest>> aFunction){
+        for (_Source tSource : aSource) {
+            Iterable<? extends _Dest> tMapped = aFunction.convert(tSource);
+            for (_Dest tDest : tMapped) {
+                aBuilder.add(tDest);
+            }
+        }
+
+        return aBuilder.build();
+    }
+
+    /**
      * 対象MapのValueのValueのみを与えられたコンバータを用いて変換します。
      *
      * @param aSource

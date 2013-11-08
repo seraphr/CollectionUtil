@@ -11,6 +11,7 @@ import jp.seraphr.common.Function
 import jp.seraphr.common.Option
 import org.scalacheck.Gen
 import org.scalatest.matchers.ShouldMatchers
+import java.util.Arrays
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks with ShouldMatchers {
   import CollectionUtils._
@@ -34,6 +35,17 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
     check((aList: List[String]) => {
       val tActual = map[String, Int](aList.asJava, (a: String) => a.length())
       val tExpected = aList.map(a => a.length()).asJava
+
+      assertEquals(tExpected, tActual)
+      true
+    })
+  }
+
+  @Test
+  def testFlatMap: Unit = {
+    check((aList: List[Int]) => {
+      val tActual = flatMap(aList.asJava, (a: Int) => Arrays.asList(a, a))
+      val tExpected = aList.flatMap(a => List(a, a)).asJava
 
       assertEquals(tExpected, tActual)
       true
