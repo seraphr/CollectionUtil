@@ -7,21 +7,21 @@ import org.scalatest.junit.JUnitSuite
 import org.scalatest.prop.Checkers
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import jp.seraphr.common.Tuple2
-import jp.seraphr.common.Converter
+import jp.seraphr.common.Function
 import jp.seraphr.common.Option
 import org.scalacheck.Gen
 import org.scalatest.matchers.ShouldMatchers
 
 class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPropertyChecks with ShouldMatchers {
   import CollectionUtils._
-  import scala.collection.JavaConversions._
+//  import scala.collection.JavaConversions._
   import scala.collection.JavaConverters._
   import jp.seraphr.collection.TestUtils._
 
   @Test
   def testMap: Unit = {
     check((aList: List[Int]) => {
-      val tActual = map(aList, (a: Int) => a / 2)
+      val tActual = map(aList.asJava, (a: Int) => a / 2)
       val tExpected = aList.map(a => a / 2).asJava
 
       assertEquals(tExpected, tActual)
@@ -32,7 +32,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testMap2: Unit = {
     check((aList: List[String]) => {
-      val tActual = map[String, Int](aList, (a: String) => a.length())
+      val tActual = map[String, Int](aList.asJava, (a: String) => a.length())
       val tExpected = aList.map(a => a.length()).asJava
 
       assertEquals(tExpected, tActual)
@@ -43,7 +43,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testFilter: Unit = {
     check((aList: List[Int]) => {
-      val tActual = filter(aList, (a: Int) => a % 2 == 0)
+      val tActual = filter(aList.asJava, (a: Int) => a % 2 == 0)
       val tExpected = aList.filter(a => a % 2 == 0).asJava
 
       assertEquals(tExpected, tActual)
@@ -54,7 +54,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testFilterNot: Unit = {
     check((aList: List[Int]) => {
-      val tActual = filterNot(aList, (a: Int) => a % 2 == 0)
+      val tActual = filterNot(aList.asJava, (a: Int) => a % 2 == 0)
       val tExpected = aList.filterNot(a => a % 2 == 0).asJava
 
       assertEquals(tExpected, tActual)
@@ -65,10 +65,10 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testCollect: Unit = {
     check((aList: List[Int]) => {
-      val tConv: Converter[Int, Option[Int]] = (a: Int) => if (a % 2 == 0) Option.none[Int] else Option.some(a * 2)
-      val tActual = collect(aList, tConv)
+      val tConv: Function[Int, Option[Int]] = (a: Int) => if (a % 2 == 0) Option.none[Int] else Option.some(a * 2)
+      val tActual = collect(aList.asJava, tConv)
 
-      tActual.forall(a => a % 2 == 0 && (a / 2) % 2 != 0)
+      tActual.asScala.forall(a => a % 2 == 0 && (a / 2) % 2 != 0)
     })
   }
 
@@ -81,14 +81,14 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           val tList = aList.map(a => a * 2)
-          assertNull(find(tList, (a: Int) => a % 2 != 0).getOrNull)
+          assertNull(find(tList.asJava, (a: Int) => a % 2 != 0).getOrNull)
         }
     }
 
     check((aList: List[Int], aSearch: Int) => {
 
       val tList = (aSearch :: aList).reverse
-      assertNotNull(find(tList, (a: Int) => a == aSearch))
+      assertNotNull(find(tList.asJava, (a: Int) => a == aSearch))
 
       true
     })
@@ -100,7 +100,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       val tList = aList.zipWithIndex
       val tJavaList = aList.asJava
       for ((v, i) <- tList) {
-        val tFindIndex = findIndex(aList, ((a: Int) => a == v))
+        val tFindIndex = findIndex(aList.asJava, ((a: Int) => a == v))
         assertEquals(tJavaList.get(i), tJavaList.get(tFindIndex))
       }
 
@@ -112,8 +112,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testContains: Unit = {
     check((aList: List[Int]) => {
       for (v <- aList) {
-        contains(aList, (a: Int) => a == v) should be (true)
-        contains(aList.remove(a => a == v), (a: Int) => a == v)  should be (false)
+        contains(aList.asJava, (a: Int) => a == v) should be (true)
+        contains(aList.filterNot(a => a == v).asJava, (a: Int) => a == v)  should be (false)
       }
 
       true
@@ -125,7 +125,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           for (v <- aList) {
-            contains(aList, (a: Int) => a < 0) should be (false)
+            contains(aList.asJava, (a: Int) => a < 0) should be (false)
           }
         }
     }
@@ -135,8 +135,8 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testContains2: Unit = {
     check((aList: List[Int]) => {
       for (v <- aList.map(_.toString(): AnyRef)) {
-        assertFalse(contains(aList, (a: Int) => a == v))
-        assertTrue(contains(aList, v, (a: Int, v: AnyRef) => a.toString == v))
+        assertFalse(contains(aList.asJava, (a: Int) => a == v))
+        assertTrue(contains(aList.asJava, v, (a: Int, v: AnyRef) => a.toString == v))
       }
 
       true
@@ -167,7 +167,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testFoldLeft: Unit = {
     check((aList: List[Int], aInit: Short) => {
       val tExpected = aList.foldLeft(aInit.asInstanceOf[Int])(_ + _)
-      val tActual = foldLeft(aList, aInit.asInstanceOf[Int], (a1: Int, a2: Int) => a1 + a2)
+      val tActual = foldLeft(aList.asJava, aInit.asInstanceOf[Int], (a1: Int, a2: Int) => a1 + a2)
 
       assertEquals(tExpected, tActual)
 
@@ -186,7 +186,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
       (aList: List[Int]) =>
         {
           val tExpected = aList.reduceLeft(_ + _)
-          val tActual = reduceLeft(aList, (a1: Int, a2: Int) => a1 + a2)
+          val tActual = reduceLeft(aList.asJava, (a1: Int, a2: Int) => a1 + a2)
           assertEquals(tExpected, tActual)
         }
     }
@@ -267,7 +267,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testZip: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
-      val tZipped = zip(aList1, aList2)
+      val tZipped = zip(aList1.asJava, aList2.asJava)
       val tExpedted = (aList1 zip aList2).map(tupleToTuple).asJava
 
       assertEquals(tExpedted, tZipped)
@@ -279,7 +279,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testZipWithIndex: Unit = {
     check((aList: List[String]) => {
-      val tZipped = zipWithIndex(aList)
+      val tZipped = zipWithIndex(aList.asJava)
       val tExpected = aList.zipWithIndex.map(tupleToTuple).asJava
 
       assertEquals(tExpected, tZipped)
@@ -291,11 +291,11 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   def testZip2: Unit = {
     check((aList1: List[String]) => {
 
-      val tC1: Converter[String, Int] = (a: String) => a.length()
-      val tC2: Converter[String, String] = (a: String) => a.take(1)
+      val tC1: Function[String, Int] = (a: String) => a.length()
+      val tC2: Function[String, String] = (a: String) => a.take(1)
 
-      val tZipped = zip[String, Int, String](aList1, tC1, tC2)
-      val tExpedted = zip(map[String, Int](aList1, tC1), map(aList1, tC2))
+      val tZipped = zip[String, Int, String](aList1.asJava, tC1, tC2)
+      val tExpedted = zip(map[String, Int](aList1.asJava, tC1), map(aList1.asJava, tC2))
 
       assertEquals(tExpedted, tZipped)
 
@@ -306,7 +306,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testUnzip: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
-      val tZipped = zip(aList1, aList2)
+      val tZipped = zip(aList1.asJava, aList2.asJava)
       val tUnzipped = unzip(tZipped)
 
       val (tE1, tE2) = (aList1 zip aList2).unzip
@@ -321,7 +321,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testUnzip1: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
-      val tZipped = zip(aList1, aList2)
+      val tZipped = zip(aList1.asJava, aList2.asJava)
       val tUnzipped = unzip1(tZipped)
 
       val (tE1, _) = (aList1 zip aList2).unzip
@@ -335,7 +335,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
   @Test
   def testUnzip2: Unit = {
     check((aList1: List[String], aList2: List[String]) => {
-      val tZipped = zip(aList1, aList2)
+      val tZipped = zip(aList1.asJava, aList2.asJava)
       val tUnzipped = unzip2(tZipped)
 
       val (_, tE2) = (aList1 zip aList2).unzip
@@ -362,7 +362,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
           val (tLeftList, _) = aList.unzip
 
           for (tValue <- tTestList) {
-            val tFind = findElement1(tZipped, tValue)
+            val tFind = findElement1(tZipped.asJava, tValue)
             if (tFind.isSome) {
               assertEquals(tValue, tFind.getOrNull.get1())
             } else {
@@ -390,7 +390,7 @@ class CollectionUtilTest extends JUnitSuite with Checkers with GeneratorDrivenPr
           val (_, tRightList) = aList.unzip
 
           for (tValue <- tTestList) {
-            val tFind = findElement2(tZipped, tValue)
+            val tFind = findElement2(tZipped.asJava, tValue)
             if (tFind.isSome) {
               assertEquals(tValue, tFind.getOrNull.get2())
             } else {

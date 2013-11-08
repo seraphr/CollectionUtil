@@ -1,19 +1,19 @@
 package jp.seraphr.collection
-import jp.seraphr.common.Converter
+import jp.seraphr.common.Function
 import jp.seraphr.common.Equivalence
 import jp.seraphr.common.Predicate
 import jp.seraphr.common.Tuple2
-import jp.seraphr.common.Converter2
+import jp.seraphr.common.Function2
 
 object TestUtils {
-  implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Converter[_F, _T] = {
-    return new Converter[_F, _T] {
+  implicit def funcToConvertor[_F, _T](aFunc: _F => _T): Function[_F, _T] = {
+    return new Function[_F, _T] {
       override def convert(aFrom: _F): _T = aFunc(aFrom)
     }
   }
 
-  implicit def funcToConvertor2[_F, _F2, _T](aFunc: (_F, _F2) => _T): Converter2[_F, _F2, _T] = {
-    return new Converter2[_F, _F2, _T] {
+  implicit def funcToConvertor2[_F, _F2, _T](aFunc: (_F, _F2) => _T): Function2[_F, _F2, _T] = {
+    return new Function2[_F, _F2, _T] {
       override def convert(aArg1: _F, aArg2: _F2): _T = aFunc(aArg1, aArg2)
     }
   }

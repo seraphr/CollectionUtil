@@ -10,10 +10,10 @@ import java.util.Map.Entry;
 import jp.seraphr.collection.builder.Builder;
 import jp.seraphr.collection.builder.ListBuilder;
 import jp.seraphr.collection.builder.MapBuilder;
-import jp.seraphr.common.Converter;
-import jp.seraphr.common.Converter2;
 import jp.seraphr.common.Equivalence;
+import jp.seraphr.common.Function;
 import jp.seraphr.common.Function0;
+import jp.seraphr.common.Function2;
 import jp.seraphr.common.NotPredicate;
 import jp.seraphr.common.Option;
 import jp.seraphr.common.Predicate;
@@ -29,7 +29,7 @@ public final class CollectionUtils {
     }
 
     /**
-     * 与えられたListの要素をそれぞれ{@link Converter} によって変換した、新しいListを作って返します。
+     * 与えられたListの要素をそれぞれ{@link Function} によって変換した、新しいListを作って返します。
      *
      * @param <_Source>
      *            変換元要素の型
@@ -37,16 +37,16 @@ public final class CollectionUtils {
      *            変換先要素の型
      * @param aSource
      *            変換元List
-     * @param aConverter
+     * @param aFunction
      *            変換関数
      * @return 変換結果List
      */
-    public static <_Source, _Dest> List<_Dest> map(List<_Source> aSource, Converter<? super _Source, ? extends _Dest> aConverter) {
-        return map(aSource, new ListBuilder<_Dest>(), aConverter);
+    public static <_Source, _Dest> List<_Dest> map(List<_Source> aSource, Function<? super _Source, ? extends _Dest> aFunction) {
+        return map(aSource, new ListBuilder<_Dest>(), aFunction);
     }
 
     /**
-     * 与えられたIterableの要素をそれぞれ{@link Converter} によって変換し、変換結果をaBuilderに与えて
+     * 与えられたIterableの要素をそれぞれ{@link Function} によって変換し、変換結果をaBuilderに与えて
      * {@link Builder#build()} 結果を返します。
      *
      * @param <_Source>
@@ -59,13 +59,13 @@ public final class CollectionUtils {
      *            変換元Iterable
      * @param aBuilder
      *            結果オブジェクトのビルダ
-     * @param aConverter
+     * @param aFunction
      *            要素の変換関数
      * @return 変換結果オブジェクト
      */
-    public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<? super _Source, ? extends _Dest> aConverter) {
+    public static <_Source, _Dest, _Result> _Result map(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Function<? super _Source, ? extends _Dest> aFunction) {
         for (_Source tSource : aSource) {
-            aBuilder.add(aConverter.convert(tSource));
+            aBuilder.add(aFunction.convert(tSource));
         }
 
         return aBuilder.build();
@@ -75,13 +75,13 @@ public final class CollectionUtils {
      * 対象MapのValueのValueのみを与えられたコンバータを用いて変換します。
      *
      * @param aSource
-     * @param aConverter
+     * @param aFunction
      * @return
      */
-    public static <_Key, _Before, _After> Map<_Key, _After> mapValue(Map<_Key, _Before> aSource, Converter<? super _Before, ? extends _After> aConverter) {
+    public static <_Key, _Before, _After> Map<_Key, _After> mapValue(Map<_Key, _Before> aSource, Function<? super _Before, ? extends _After> aFunction) {
         Map<_Key, _After> tResult = new HashMap<_Key, _After>();
         for(Entry<_Key, _Before> tEntry : aSource.entrySet()){
-            tResult.put(tEntry.getKey(), aConverter.convert(tEntry.getValue()));
+            tResult.put(tEntry.getKey(), aFunction.convert(tEntry.getValue()));
         }
 
         return tResult;
@@ -181,36 +181,36 @@ public final class CollectionUtils {
     }
 
     /**
-     * {@link #filter(List, Predicate)}と{@link #map(List, Converter)}を同時に行います。
-     * aConverterの{@linkplain Converter#convert(Object)}
+     * {@link #filter(List, Predicate)}と{@link #map(List, Function)}を同時に行います。
+     * aFunctionの{@linkplain Function#convert(Object)}
      * がSomeを返すもののみを結果のリストに加えます。
      *
      * @param aSource
      *            変換元リスト
-     * @param aConverter
+     * @param aFunction
      *            変換関数
      * @return 生成されたリスト
      */
-    public static <_Source, _Dest> List<_Dest> collect(List<_Source> aSource, Converter<_Source, Option<_Dest>> aConverter) {
-        return collect(aSource, new ListBuilder<_Dest>(), aConverter);
+    public static <_Source, _Dest> List<_Dest> collect(List<_Source> aSource, Function<_Source, Option<_Dest>> aFunction) {
+        return collect(aSource, new ListBuilder<_Dest>(), aFunction);
     }
 
     /**
      * {@link #filter(Iterable, Builder, Predicate)}と
-     * {@link #map(Iterable, Builder, Converter)}を同時に行います。 aConverterの
-     * {@linkplain Converter#convert(Object)}がSomeを返すもののみを結果のコレクションに加えます。
+     * {@link #map(Iterable, Builder, Function)}を同時に行います。 aFunctionの
+     * {@linkplain Function#convert(Object)}がSomeを返すもののみを結果のコレクションに加えます。
      *
      * @param aSource
      *            変換元コレクション
      * @param aBuilder
      *            結果コレクションビルダ
-     * @param aConverter
+     * @param aFunction
      *            変換関数
      * @return 生成されたコレクション
      */
-    public static <_Source, _Dest, _Result> _Result collect(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Converter<_Source, Option<_Dest>> aConverter) {
+    public static <_Source, _Dest, _Result> _Result collect(Iterable<_Source> aSource, Builder<_Dest, _Result> aBuilder, Function<_Source, Option<_Dest>> aFunction) {
         for (_Source tSource : aSource) {
-            Option<_Dest> tOption = aConverter.convert(tSource);
+            Option<_Dest> tOption = aFunction.convert(tSource);
             if (tOption.isSome()) {
                 aBuilder.add(tOption.getOrNull());
             }
@@ -328,16 +328,16 @@ public final class CollectionUtils {
      *            畳み込み対象のコレクション
      * @param aFirst
      *            畳み込み結果の初期値。 aSourceの長さが0の場合、この値が返る
-     * @param aConverter
-     *            畳み込み演算を表す{@link Converter2}。
-     *            {@link Converter2#convert(Object, Object)}
+     * @param aFunction
+     *            畳み込み演算を表す{@link Function2}。
+     *            {@link Function2#convert(Object, Object)}
      *            の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
      * @return 畳み込み演算結果
      */
-    public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Converter2<_Result, _Elem, _Result> aConverter) {
+    public static <_Elem, _Result> _Result foldLeft(Iterable<_Elem> aSource, _Result aFirst, Function2<_Result, _Elem, _Result> aFunction) {
         _Result tResult = aFirst;
         for (_Elem tElem : aSource) {
-            tResult = aConverter.convert(tResult, tElem);
+            tResult = aFunction.convert(tResult, tElem);
         }
 
         return tResult;
@@ -353,13 +353,13 @@ public final class CollectionUtils {
      * @param <_Elem>
      * @param aSource
      *            畳み込み対象コレクション 長さが0の場合例外
-     * @param aConverter
-     *            畳み込み演算を表す{@link Converter2}。
-     *            {@link Converter2#convert(Object, Object)}
+     * @param aFunction
+     *            畳み込み演算を表す{@link Function2}。
+     *            {@link Function2#convert(Object, Object)}
      *            の第一引数は畳み込み演算の途中結果、第二引数はコレクションの要素を表す。
      * @return 畳い込み演算結果
      */
-    public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Converter2<_Elem, _Elem, _Elem> aConverter) {
+    public static <_Elem> _Elem reduceLeft(Iterable<_Elem> aSource, Function2<_Elem, _Elem, _Elem> aFunction) {
         Iterator<_Elem> tIterator = aSource.iterator();
 
         if (!tIterator.hasNext())
@@ -367,7 +367,7 @@ public final class CollectionUtils {
 
         _Elem tResult = tIterator.next();
         while (tIterator.hasNext()) {
-            tResult = aConverter.convert(tResult, tIterator.next());
+            tResult = aFunction.convert(tResult, tIterator.next());
         }
 
         return tResult;
@@ -408,11 +408,11 @@ public final class CollectionUtils {
      * 与えられたリストを、与えられた関数による変換を用いてグループ化します。
      *
      * @param aSource
-     * @param aConverter
+     * @param aFunction
      * @return
      */
-    public static <_E, _Key> Map<_Key, List<_E>> groupBy(final List<_E> aSource, final Converter<_E, _Key> aConverter){
-        return groupBy(aSource, aConverter, new Function0<Builder<_E, List<_E>>>(){
+    public static <_E, _Key> Map<_Key, List<_E>> groupBy(final List<_E> aSource, final Function<_E, _Key> aFunction){
+        return groupBy(aSource, aFunction, new Function0<Builder<_E, List<_E>>>(){
             @Override
             public Builder<_E, List<_E>> apply() {
                 return new ListBuilder<_E>();
@@ -424,20 +424,20 @@ public final class CollectionUtils {
      * 与えられたコレクションを、与えられた関数による変換を用いてグループ化します。
      *
      * @param aSource グループ化対象コレクション
-     * @param aConverter グループ化の方法を定義する関数
+     * @param aFunction グループ化の方法を定義する関数
      * @param aBuilderProvider 『結果Valueの生成器』の供給機
      * @return
      */
-    public static <_E, _Key, _Result> Map<_Key, _Result> groupBy(final Iterable<_E> aSource, final Converter<_E, _Key> aConverter, final Function0<Builder<_E, _Result>> aBuilderProvider) {
+    public static <_E, _Key, _Result> Map<_Key, _Result> groupBy(final Iterable<_E> aSource, final Function<_E, _Key> aFunction, final Function0<Builder<_E, _Result>> aBuilderProvider) {
         Map<_Key, Builder<_E, _Result>> tKeyMap = new HashMap<_Key, Builder<_E, _Result>>();
 
         for (_E tElem : aSource) {
-            _Key tKey = aConverter.convert(tElem);
+            _Key tKey = aFunction.convert(tElem);
             Builder<_E, _Result> tBuilder = getBuilder(tKeyMap, tKey, aBuilderProvider);
             tBuilder.add(tElem);
         }
 
-        return mapValue(tKeyMap, new Converter<Builder<_E, _Result>, _Result>(){
+        return mapValue(tKeyMap, new Function<Builder<_E, _Result>, _Result>(){
             @Override
             public _Result convert(Builder<_E, _Result> aSource) {
                 return aSource.build();
@@ -463,7 +463,7 @@ public final class CollectionUtils {
      * @return
      */
     public static <_E, _Result> _Result to(final Iterable<_E> aSource, final Builder<_E, _Result> aBuilder){
-        // map使えばできるけど、Converter噛ますコストを払いたくないので
+        // map使えばできるけど、Function噛ますコストを払いたくないので
         for (_E tE : aSource) {
             aBuilder.add(tE);
         }
@@ -479,7 +479,7 @@ public final class CollectionUtils {
      * @return
      */
     public static <_K, _V, _Result> _Result to(final Map<_K, _V> aSource, final Builder<Tuple2<_K, _V>, _Result> aBuilder){
-        return map(aSource.entrySet(), aBuilder, new Converter<Entry<_K, _V>, Tuple2<_K, _V>>() {
+        return map(aSource.entrySet(), aBuilder, new Function<Entry<_K, _V>, Tuple2<_K, _V>>() {
             @Override
             public Tuple2<_K, _V> convert(Entry<_K, _V> aSource) {
                 return Tuple2.create(aSource.getKey(), aSource.getValue());
@@ -579,24 +579,24 @@ public final class CollectionUtils {
     }
 
     /**
-     * 与えられたリストの要素を、与えられた２つのConverterで変換し、新しいListを作って返します。
+     * 与えられたリストの要素を、与えられた２つのFunctionで変換し、新しいListを作って返します。
      *
      * @param <_Source>
      * @param <_E1>
      * @param <_E2>
      * @param aSourceList
-     * @param aConverter1
-     * @param aConverter2
+     * @param aFunction1
+     * @param aFunction2
      * @return zip結合結果List
      */
-    public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Converter<? super _Source, ? extends _E1> aConverter1, Converter<? super _Source, ? extends _E2> aConverter2) {
-        final Converter<? super _Source, ? extends _E1> tConverter1 = aConverter1;
-        final Converter<? super _Source, ? extends _E2> tConverter2 = aConverter2;
+    public static <_Source, _E1, _E2> List<Tuple2<_E1, _E2>> zip(List<_Source> aSourceList, Function<? super _Source, ? extends _E1> aFunction1, Function<? super _Source, ? extends _E2> aFunction2) {
+        final Function<? super _Source, ? extends _E1> tFunction1 = aFunction1;
+        final Function<? super _Source, ? extends _E2> tFunction2 = aFunction2;
 
-        return map(aSourceList, new Converter<_Source, Tuple2<_E1, _E2>>() {
+        return map(aSourceList, new Function<_Source, Tuple2<_E1, _E2>>() {
             @Override
             public Tuple2<_E1, _E2> convert(_Source aSource) {
-                return Tuple2.<_E1, _E2> create(tConverter1.convert(aSource), tConverter2.convert(aSource));
+                return Tuple2.<_E1, _E2> create(tFunction1.convert(aSource), tFunction2.convert(aSource));
             }
         });
     }
